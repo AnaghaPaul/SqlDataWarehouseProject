@@ -295,3 +295,42 @@ OR sls_sales IS NULL OR sls_quantity IS NULL OR sls_price IS NULL
 OR sls_sales <= 0 OR sls_quantity <= 0 OR sls_price <= 0
 ORDER BY sls_sales, sls_quantity, sls_price;
 
+------------------------------------------------------------------
+-->>>>> ERP Tables
+--erp_cust_az12
+--bronze layer
+SELECT
+	
+	CASE WHEN cid LIKE 'NAS%' THEN SUBSTRING(cid, 4, LEN(cid))
+		ELSE cid
+	END cid,
+	bdate,
+	gen
+FROM bronze.erp_cust_az12
+	
+WHERE CASE WHEN cid LIKE 'NAS%' THEN SUBSTRING(cid, 4, LEN(cid))
+	ELSE cid
+END
+NOT IN (SELECT DISTINCT cst_key FROM bronze.crm_cust_info);
+
+--Invalid dates
+SELECT DISTINCT
+bdate
+FROM bronze.erp_cust_az12
+WHERE bdate < '1924-01-01' OR bdate > GETDATE();
+--gen
+SELECT DISTINCT
+gen
+FROM bronze.erp_cust_az12;
+--Silver layer
+SELECT DISTINCT
+	bdate
+FROM silver.erp_cust_az12
+WHERE bdate < '1924-01-01' OR bdate > GETDATE();
+
+SELECT DISTINCT
+gen
+FROM silver.erp_cust_az12;
+
+
+
