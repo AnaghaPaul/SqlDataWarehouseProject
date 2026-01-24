@@ -332,5 +332,38 @@ SELECT DISTINCT
 gen
 FROM silver.erp_cust_az12;
 
+--erp_loc_a101
+-- checking valid  keys
+SELECT DISTINCT
+	cid
+FROM bronze.erp_loc_a101
+WHERE cid NOT IN (SELECT cst_key FROM silver.crm_cust_info)
+
+SELECT DISTINCT
+	REPLACE(cid,'-','') AS cid
+FROM bronze.erp_loc_a101
+WHERE REPLACE(cid,'-','') NOT IN (SELECT cst_key FROM silver.crm_cust_info)
+
+-- Data Standardization and Consistency
+SELECT DISTINCT
+cntry
+FROM bronze.erp_loc_a101;
+
+--Quality Check - Silver layer
+SELECT DISTINCT
+	cid
+FROM silver.erp_loc_a101
+WHERE cid NOT IN (SELECT cst_key FROM silver.crm_cust_info)
+
+SELECT DISTINCT
+	cntry
+FROM
+silver.erp_loc_a101;
+
+
+
+
+
+
 
 
