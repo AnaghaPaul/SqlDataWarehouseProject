@@ -109,6 +109,7 @@ FROM bronze.crm_sales_details;
 
 
 --ERP Tables
+--erp_cust_az12
 INSERT INTO silver.erp_cust_az12(cid, bdate, gen)
 	SELECT 
 	
