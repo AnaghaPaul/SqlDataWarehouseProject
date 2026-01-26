@@ -1,5 +1,28 @@
+/*
+==========================================================
+Quality Checks
+==========================================================
+Script Purpose:
+This script performs various quality checke for data consistency,
+accuracy, and standardization accross the 'silver' schema. It includes
+checks for:
+	- Null or duplicate primary keys.
+	- Unwanted spaces in string fields.
+	- Data standardization and consistency.
+	- Invalid Date ranges and orders.
+	- Data consistency between related fields.
+
+Usage Notes:
+	- Run these checks after data loading silver layer.
+	- Investigate and resolve any discrepancies found during the checks.
+=================================================================================
+*/
+-- ---------------------------------------------------------------------------
+-- ==============================================================================
 /* Identifying quality issues*/
 --crm_cust_info (bronze)
+-- ==============================================================================
+
 -- Check for Nulls or Duplicates in Primary Key
 -- Expectation : No Result
 SELECT
@@ -25,10 +48,10 @@ bronze.crm_cust_info;
 SELECT DISTINCT(cst_marital_status)
 FROM
 bronze.crm_cust_info;
-------------------------------------------
-
+-- =======================================================================
 /* Identifying quality issues*/
 --crm_cust_info(silver)
+-- ========================================================================
 -- Check for Nulls or Duplicates in Primary Key
 -- Expectation : No Result
 SELECT
@@ -55,11 +78,13 @@ SELECT DISTINCT(cst_marital_status)
 FROM
 silver.crm_cust_info;
 
+-- ================================================================
 
-
-----------------------------------------
+-- ----------------------------------------------------------------
+-- ================================================================
 --crm_prd_info (bronze)
 /* Identifying quality issues*/
+-- ===============================================================
 -- Check for Nulls or Duplicates in Primary Key
 -- Expectation : No Result
 
@@ -94,9 +119,10 @@ bronze.crm_prd_info;
 SELECT *
 FROM bronze.crm_prd_info
 WHERE prd_start_dt > prd_end_dt;
------------------------------------------------------
---crm_prd_info---silver
+-- ==============================================================
 /* Identifying quality issues*/
+--crm_prd_info---silver
+-- =============================================================
 -- Check for Nulls or Duplicates in Primary Key
 -- Expectation : No Result
 
@@ -131,8 +157,11 @@ silver.crm_prd_info;
 SELECT *
 FROM silver.crm_prd_info
 WHERE prd_start_dt > prd_end_dt;
----------------------------------------------
+-- --------------------------------------------------------------
+-- ==============================================================
+/* Identifying quality issues*/
 --crm_sales_details
+-- =============================================================
 -->> Bronze layer
 SELECT 
 sls_ord_num,
@@ -233,9 +262,10 @@ ORDER BY sls_sales, sls_quantity, sls_price;
 -- if price is zero or null, calculate it using sales and quantity
 -- if price is negative, convert it to a positive value
 
-
+-- ===================================================================
 -->> Silver layer
 --Quality check, silver layer
+-- ==================================================================
 SELECT 
 sls_ord_num,
 sls_prd_key,
@@ -296,9 +326,16 @@ OR sls_sales <= 0 OR sls_quantity <= 0 OR sls_price <= 0
 ORDER BY sls_sales, sls_quantity, sls_price;
 
 ------------------------------------------------------------------
+-- ===============================================================
+-- ===============================================================
 -->>>>> ERP Tables
+-- ===============================================================
+
+-- ===============================================================
 --erp_cust_az12
---bronze layer
+-- ===============================================================
+
+-- >>> bronze layer
 SELECT
 	
 	CASE WHEN cid LIKE 'NAS%' THEN SUBSTRING(cid, 4, LEN(cid))
@@ -322,7 +359,8 @@ WHERE bdate < '1924-01-01' OR bdate > GETDATE();
 SELECT DISTINCT
 gen
 FROM bronze.erp_cust_az12;
---Silver layer
+
+-- >>>Silver layer
 SELECT DISTINCT
 	bdate
 FROM silver.erp_cust_az12
@@ -331,8 +369,9 @@ WHERE bdate < '1924-01-01' OR bdate > GETDATE();
 SELECT DISTINCT
 gen
 FROM silver.erp_cust_az12;
-
+-- ======================================================
 --erp_loc_a101
+-- ======================================================
 -- checking valid  keys
 SELECT DISTINCT
 	cid
@@ -349,7 +388,7 @@ SELECT DISTINCT
 cntry
 FROM bronze.erp_loc_a101;
 
---Quality Check - Silver layer
+-->>> Silver layer
 SELECT DISTINCT
 	cid
 FROM silver.erp_loc_a101
