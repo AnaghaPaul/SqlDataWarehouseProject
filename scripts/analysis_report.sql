@@ -109,6 +109,14 @@ FROM active_customers a
 LEFT JOIN new_customers nc
        ON a.order_year = nc.acquisition_year
 ORDER BY a.order_year;
+/*
+order_year	new_customers	active_customers	new_customer_rate_percent
+NULL	NULL	15	NULL
+2010	14	14	100.000000000000
+2011	2216	2216	100.000000000000
+2012	3225	3255	99.080000000000
+2013	12521	17427	71.850000000000
+2014	506	834	60.670000000000*/
 
 
 
