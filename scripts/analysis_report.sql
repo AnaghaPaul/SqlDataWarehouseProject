@@ -78,6 +78,38 @@ customer_id	customer_number	first_name	last_name	country	marital_status	birthdat
 11008	AW00011008	Rob	Verhoff	Australia	Single	1975-07-04	2011	3	8106
 11009	AW00011009	Shannon	Carlson	Australia	Single	1969-09-29	2011	3	8091
 */
+WITH first_purchase AS (
+    SELECT
+        customer_key,
+        MIN(order_date) AS first_order_date
+    FROM gold.fact_sales
+    GROUP BY customer_key
+)
+, new_customers AS (
+    SELECT
+        YEAR(first_order_date) AS acquisition_year,
+        COUNT(customer_key) AS new_customers
+    FROM first_purchase
+    GROUP BY YEAR(first_order_date)
+)
+
+, active_customers AS (
+    SELECT
+        YEAR(order_date) AS order_year,
+        COUNT(DISTINCT customer_key) AS active_customers
+    FROM gold.fact_sales
+    GROUP BY YEAR(order_date)
+)
+SELECT
+    a.order_year,
+    nc.new_customers,
+    a.active_customers,
+    ROUND((nc.new_customers * 1.0 / a.active_customers) * 100, 2) AS new_customer_rate_percent
+FROM active_customers a
+LEFT JOIN new_customers nc
+       ON a.order_year = nc.acquisition_year
+ORDER BY a.order_year;
+
 
 
 
