@@ -10,6 +10,7 @@ The curated data is analyzed using SQL and Power BI to understand customer behav
 
 The data architecture for this project follows Medallion Architecture **Bronze**, **Silver**, and **Gold** layers:
 ![Data Architecture](docs/DataArchitecture.png)
+![Data Architecture](docs/DataFlow.png)
 
 ![Data Flow](docs/Data Flow.png)
 
