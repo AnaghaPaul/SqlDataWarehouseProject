@@ -12,6 +12,14 @@ The data architecture for this project follows Medallion Architecture **Bronze**
 ![Data Architecture](docs/DataArchitecture.png)
 ![Data Flow](docs/DataFlow.png)
 
+/* Data was generated as result of business process of a E-commerce web based retailer which specializes on selling products related to
+sports such as bikes, clothings, gears and so on.
+The data is stored in the DataWarehouse database which follows a medallion architecture.
+The cleaned and analysis ready data is stored in the gold layer of the databse, as 3 objects or views.
+- dim.customers
+- dim.products
+- fact_sales
+
 
 1. **Bronze Layer**: Stores raw data as-is from the source systems. Data is ingested from CSV Files into SQL Server Database.
 2. **Silver Layer**: This layer includes data cleansing, standardization, and normalization processes to prepare data for analysis.
@@ -98,6 +106,29 @@ data-warehouse-project/
 
 ---
 ## Queries and Analysis
+The data analysis is done in 5 stages 
+   - Explore
+   - Profile
+   - Clean
+   - Shape
+   - Analysis
+**Explore**
+In this stage, we try to answer the following questions-
+-- Where the Data was generated ?
+-- Where is the data stored?
+
+Data was generated as result of business process of a E-commerce web based retailer which specializes on selling products related to
+sports such as bikes, clothings, gears and so on.
+The data is stored in the DataWarehouse database which follows a medallion architecture.
+The cleaned and analysis ready data is stored in the gold layer of the databse, as 3 objects or views.
+- dim.customers
+- dim.products
+- fact_sales
+
+**Profile**
+In this stage, we try to answer the following questions-
+-- Identifying the domain the data or business falls in
+-- Checking unique values, distributions of records in dataset
 
 ![DataAnalysisWorkFlow](docs/DataAnalysisWorkFlow.png)
 
