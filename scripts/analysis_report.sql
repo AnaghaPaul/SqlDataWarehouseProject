@@ -122,6 +122,46 @@ customer_id	customer_number	first_name	last_name	country	marital_status	birthdat
 -- 2. Assess the effectiveness of marketing and acquisition campaigns
 -- 3. Identify trends in customer acquisition and seasonality
 -- 4. Make data-driven decisions to improve customer acquisition strategies
+-- New Customer Growth (YoY) per year
+WITH first_purchase AS (
+    SELECT
+        customer_key,
+        MIN(order_date) AS first_purchase_date
+    FROM gold.fact_sales
+	WHERE order_date IS NOT NULL
+    GROUP BY customer_key
+),
+new_customers AS (
+    SELECT
+        YEAR(first_purchase_date) AS acquisition_year,
+        COUNT(customer_key) AS new_customers
+    FROM first_purchase
+    GROUP BY YEAR(first_purchase_date)
+)
+SELECT
+    acquisition_year,
+    new_customers,
+    LAG(new_customers) OVER (ORDER BY acquisition_year) AS prev_year_new_customers,
+    ROUND(
+        ((new_customers - LAG(new_customers) OVER (ORDER BY acquisition_year)) * 1.0 /
+        LAG(new_customers) OVER (ORDER BY acquisition_year)) * 100, 2
+    ) AS new_customer_growth_percent
+FROM new_customers
+ORDER BY acquisition_year;
+/*
+acquisition_year	new_customers	prev_year_new_customers	new_customer_growth_percent
+2010	14	NULL	NULL
+2011	2216	14	15728.570000000000
+2012	3225	2216	45.530000000000
+2013	12521	3225	288.250000000000
+2014	506	12521	-95.960000000000
+*/
+
+
+-- Note: 
+-- The YoY growth for 2014 is significantly negative because the dataset for 2014 only contains partial-year data (e.g., January). 
+-- For full-year comparisons, consider using only years with complete data or calculating Year-to-Date (YTD) growth for the current year.
+
 
 
 
