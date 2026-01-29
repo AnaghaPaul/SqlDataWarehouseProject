@@ -97,7 +97,7 @@ data-warehouse-project/
 ```
 
 ---
-## Analytics Insights
+## Queries and Analysis
 
 This section summarizes the key insights derived from the sales and customer data analysis for the e-commerce business:
 
