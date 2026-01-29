@@ -31,6 +31,47 @@ WHERE y2013.order_year = 2013;
 /*result : 1.88% < 40% --> E-Commerce type is aquisition mode, the buyers of this business usually do not repurchase the product,
 this may be due to the business selling one-time purchase products and customer does not need to up-grade soon.
 Loyalty programs are not good long-term investments, instead the company need to focus on acquiring new customers*/
+-- This is further proved by the following fact that majority of the annual customers consists of new customers
+WITH first_purchase AS (
+    SELECT
+        customer_key,
+        MIN(order_date) AS first_order_date
+    FROM gold.fact_sales
+    GROUP BY customer_key
+)
+, new_customers AS (
+    SELECT
+        YEAR(first_order_date) AS acquisition_year,
+        COUNT(customer_key) AS new_customers
+    FROM first_purchase
+    GROUP BY YEAR(first_order_date)
+)
+
+, active_customers AS (
+    SELECT
+        YEAR(order_date) AS order_year,
+        COUNT(DISTINCT customer_key) AS active_customers
+    FROM gold.fact_sales
+    GROUP BY YEAR(order_date)
+)
+SELECT
+    a.order_year,
+    nc.new_customers,
+    a.active_customers,
+    ROUND((nc.new_customers * 1.0 / a.active_customers) * 100, 2) AS new_customer_rate_percent
+FROM active_customers a
+LEFT JOIN new_customers nc
+       ON a.order_year = nc.acquisition_year
+ORDER BY a.order_year;
+/*
+order_year	new_customers	active_customers	new_customer_rate_percent
+NULL	NULL	15	NULL
+2010	14	14	100.000000000000
+2011	2216	2216	100.000000000000
+2012	3225	3255	99.080000000000
+2013	12521	17427	71.850000000000
+2014	506	834	60.670000000000*/
+
 WITH customer_metrics AS (
     SELECT
         customer_key,
@@ -72,45 +113,6 @@ customer_id	customer_number	first_name	last_name	country	marital_status	birthdat
 11008	AW00011008	Rob	Verhoff	Australia	Single	1975-07-04	2011	3	8106
 11009	AW00011009	Shannon	Carlson	Australia	Single	1969-09-29	2011	3	8091
 */
-WITH first_purchase AS (
-    SELECT
-        customer_key,
-        MIN(order_date) AS first_order_date
-    FROM gold.fact_sales
-    GROUP BY customer_key
-)
-, new_customers AS (
-    SELECT
-        YEAR(first_order_date) AS acquisition_year,
-        COUNT(customer_key) AS new_customers
-    FROM first_purchase
-    GROUP BY YEAR(first_order_date)
-)
-
-, active_customers AS (
-    SELECT
-        YEAR(order_date) AS order_year,
-        COUNT(DISTINCT customer_key) AS active_customers
-    FROM gold.fact_sales
-    GROUP BY YEAR(order_date)
-)
-SELECT
-    a.order_year,
-    nc.new_customers,
-    a.active_customers,
-    ROUND((nc.new_customers * 1.0 / a.active_customers) * 100, 2) AS new_customer_rate_percent
-FROM active_customers a
-LEFT JOIN new_customers nc
-       ON a.order_year = nc.acquisition_year
-ORDER BY a.order_year;
-/*
-order_year	new_customers	active_customers	new_customer_rate_percent
-NULL	NULL	15	NULL
-2010	14	14	100.000000000000
-2011	2216	2216	100.000000000000
-2012	3225	3255	99.080000000000
-2013	12521	17427	71.850000000000
-2014	506	834	60.670000000000*/
 
 
 
