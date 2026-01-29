@@ -1,4 +1,126 @@
-/* Analysis*/
+/*Queries and Analysis*/
+
+-- >> Explore 
+-- Where Data was generated ?
+-- Databases which data is stored?
+
+/* Data was generated as result of business process of a E-commerce web based retailer which specializes on selling products related to
+sports such as bikes, clothings, gears and so on.
+The data is stored in the DataWarehouse database which follows a medallion architecture.
+The cleaned and analysis ready data is stored in the gold layer of the databse, as 3 objects or views.
+- dim.customers
+- dim.products
+- fact_sales
+*/
+
+-- >> Profile
+-- Identifying the domain the data or business falls in
+-- Checking unique values, distributions of records in dataset
+
+-- most of the cleaning of data was done in warehouse itself and the resulted data is in gold layer
+
+/*The business is Ecommerce business model.*/
+
+-- column-level 
+-- missing values
+SELECT Metric, Value
+FROM (
+    SELECT
+        COUNT(*) AS total_rows,
+        COUNT(order_date) AS order_date_filled,
+        COUNT(customer_key) AS customer_filled,
+        COUNT(product_key) AS product_filled,
+        COUNT(shipping_date) AS shipping_date_filled,
+        COUNT(due_date) AS due_date_filled,
+        COUNT(sales_amount) AS sales_amount_filled,
+        COUNT(quantity) AS quantity_filled,
+        COUNT(price) AS price_filled
+    FROM gold.fact_sales
+) AS t
+UNPIVOT (
+    Value FOR Metric IN (
+        total_rows,
+        order_date_filled,
+        customer_filled,
+        product_filled,
+        shipping_date_filled,
+        due_date_filled,
+        sales_amount_filled,
+        quantity_filled,
+        price_filled
+    )
+) AS up;
+
+/*Metric	Value
+total_rows	60398
+order_date_filled	60379
+customer_filled	60398
+product_filled	60398
+shipping_date_filled	60398
+due_date_filled	60398
+sales_amount_filled	60398
+quantity_filled	60398
+price_filled	60398*/
+-->> Mising values in order date
+
+SELECT 
+category, YEAR(fs.order_date) AS order_year,
+SUM(quantity) AS Total_quantity_sold,
+SUM(sales_amount) AS Total_revenue
+FROM gold.fact_sales AS fs
+LEFT JOIN
+gold.dim_products AS dp
+ON fs.product_key=dp.product_key
+GROUP BY dp.category, YEAR(fs.order_date)
+ORDER BY order_year ASC,Total_revenue DESC, Total_quantity_sold DESC;
+
+-- solution
+-- Step 1: Calculate average shipping lag
+WITH avg_lag AS (
+    SELECT AVG(DATEDIFF(day, order_date, shipping_date)) AS avg_shipping_lag
+    FROM gold.fact_sales
+    WHERE order_date IS NOT NULL AND shipping_date IS NOT NULL
+),
+
+-- Step 2: Replace missing order_date with shipping_date - average lag
+fact_sales_new AS (
+    SELECT
+        fs.order_number,
+        fs.product_key,
+        fs.customer_key,
+        COALESCE(
+            fs.order_date,
+            DATEADD(day, -al.avg_shipping_lag, fs.shipping_date)
+        ) AS order_date,
+        fs.shipping_date,
+        fs.due_date,
+        fs.sales_amount,
+        fs.quantity,
+        fs.price
+    FROM gold.fact_sales fs
+    CROSS JOIN avg_lag al
+)
+
+SELECT *
+FROM fact_sales_new;
+
+
+-- The following  sql script results can be used to visualize distributions of variables in the form of histograms or frequency distribution graphs 
+-- Distribution of overall sales of 
+SELECT 
+category,
+SUM(quantity) AS Total_quantity_sold,
+SUM(sales_amount) AS Total_revenue
+FROM gold.fact_sales AS fs
+LEFT JOIN
+gold.dim_products AS dp
+ON fs.product_key=dp.product_key
+GROUP BY dp.category
+ORDER BY Total_revenue DESC, Total_quantity_sold DESC;
+
+
+
+
 /* The type of business is E-commerce , where  a visitor buys something from a web based retailer*/
 -- Before we do any further analysis , let's look the objective or aim of the business - where should the business focus ? 
 -- This can be identified by deciding the mode of E-commerce the company falls in.
@@ -161,6 +283,23 @@ acquisition_year	new_customers	prev_year_new_customers	new_customer_growth_perce
 -- Note: 
 -- The YoY growth for 2014 is significantly negative because the dataset for 2014 only contains partial-year data (e.g., January). 
 -- For full-year comparisons, consider using only years with complete data or calculating Year-to-Date (YTD) growth for the current year.
+    COUNT(DISTINCT order_number) AS total_orders,
+    COUNT(DISTINCT customer_key) AS active_customers,
+    SUM(quantity) AS total_units_sold,
+    SUM(sales_amount) AS total_revenue,
+	((SUM(sales_amount)-LAG(SUM(sales_amount)) OVER (ORDER BY YEAR(order_date)))*1.0/
+	(LAG(SUM(sales_amount)) OVER (ORDER BY YEAR(order_date))*1.0))*100.0 AS revenue_growth
+FROM gold.fact_sales
+GROUP BY YEAR(order_date)
+ORDER BY order_year;
+
+/*order_year	total_orders	active_customers	total_units_sold	total_revenue	revenue_growth
+NULL	15	15	19	4992	NULL
+2010	14	14	14	43419	769.7716346153846000
+2011	2216	2216	2216	7075088	16194.9123655542504000
+2012	3269	3255	3397	5842231	-17.4253238970313000
+2013	21287	17427	52807	16344878	179.7711696096919000
+2014	871	834	1970	45642	-99.7207565574977000*/
 
 
 
