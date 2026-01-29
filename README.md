@@ -99,6 +99,9 @@ data-warehouse-project/
 ---
 ## Queries and Analysis
 
+![DataAnalysisWorkFlow](docs/DataAnalysisWorkFlow.png)
+
+
 This section summarizes the key insights derived from the sales and customer data analysis for the e-commerce business:
 
 **1. Business Model Insight**
