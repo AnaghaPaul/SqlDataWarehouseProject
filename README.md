@@ -106,6 +106,7 @@ data-warehouse-project/
 
 ---
 ## Queries and Analysis
+![DataAnalysisWorkFlow](docs/DataAnalysisWorkFlow.png)
 The data analysis is done in 5 stages 
    - Explore
    - Profile
@@ -130,7 +131,7 @@ In this stage, we try to answer the following questions-
 -- Identifying the domain the data or business falls in
 -- Checking unique values, distributions of records in dataset
 
-![DataAnalysisWorkFlow](docs/DataAnalysisWorkFlow.png)
+
 
 
 This section summarizes the key insights derived from the sales and customer data analysis for the e-commerce business:
