@@ -1,5 +1,9 @@
-# SqlDataWarehouseProject
-Building a modern data warehouse with SQL Server, including ETL processes, data modelling and Analysis.
+# Modern E-Commerce Data Warehouse for Growth & Customer Analytics
+This project demonstrates an end-to-end data lifecycle for an e-commerce retail business, transforming raw operational data into analytics-ready insights that support strategic, data-driven decision-making.
+
+Data is ingested from multiple source systems and processed through structured ETL pipelines within a modern SQL Server–based data warehouse, following the Medallion Architecture (Bronze, Silver, Gold). Each layer incrementally improves data quality, structure, and usability, resulting in a clean, business-ready analytical model.
+
+The curated data is analyzed using SQL and Power BI to understand customer behavior, product performance, and sales trends across a diverse product catalog. These insights enable the business to evaluate growth dynamics, identify revenue drivers, and make informed decisions around customer acquisition strategy, pricing, and investment allocation, supporting effective and sustainable business growth.
 
 ---
 ## 🏗️ Data Architecture
