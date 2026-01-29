@@ -107,6 +107,7 @@ data-warehouse-project/
 ---
 ## Queries and Analysis
 ![DataAnalysisWorkFlow](docs/DataAnalysisWorkFlow.png)
+
 The data analysis is done in 5 stages 
    - Explore
    - Profile
