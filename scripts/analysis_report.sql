@@ -114,6 +114,16 @@ customer_id	customer_number	first_name	last_name	country	marital_status	birthdat
 11009	AW00011009	Shannon	Carlson	Australia	Single	1969-09-29	2011	3	8091
 */
 
+-- >> Key Business Metric: New Customer Growth (YoY)
+
+-- Purpose:
+-- Keeping track of this metric enables the business to:
+-- 1. Monitor overall business growth over time
+-- 2. Assess the effectiveness of marketing and acquisition campaigns
+-- 3. Identify trends in customer acquisition and seasonality
+-- 4. Make data-driven decisions to improve customer acquisition strategies
+
+
 
 
 
