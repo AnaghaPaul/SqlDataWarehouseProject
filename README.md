@@ -99,7 +99,7 @@ data-warehouse-project/
 
 This section summarizes the key insights derived from the sales and customer data analysis for the e-commerce business:
 
-** 1. Business Model Insight **
+**1. Business Model Insight**
 
 The annual repurchase rate is only 1.88%, which is far below the 40% threshold.
 
@@ -115,17 +115,7 @@ For example, in 2013, 71.85% of active customers were new.
 
 Insight: The business relies heavily on acquiring new customers each year to sustain growth.
 
-**3. Customer Lifetime Value (CLV) & Engagement**
-
-Individual customer analysis reveals:
-
-Number of orders per customer.
-
-Total revenue contributed per customer (customer_lifetime_value).
-
-Implication: These metrics can help identify high-value customers early and target them for future campaigns.
-
-**4. New Customer Growth Trends**
+**3. New Customer Growth Trends**
 
 Year-over-year (YoY) growth analysis shows:
 
@@ -135,7 +125,7 @@ Apparent decline in 2014 due to partial-year data.
 
 Insight: Focus on complete-year trends or YTD growth to avoid misleading interpretations.
 
-**5. Key Business Metric Recommendation**
+**4. Key Business Metric Recommendation**
 
 New Customer Growth (YoY) should be tracked as the primary business metric, as it:
 
@@ -145,7 +135,7 @@ Evaluates marketing effectiveness.
 
 Identifies seasonal or annual trends in customer acquisition.
 
-**6. Strategic Implications**
+**5. Strategic Implications**
 
 Focus resources on:
 
