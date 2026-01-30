@@ -116,8 +116,8 @@ The data analysis is done in 5 stages
    - Analysis
 **Explore**
 In this stage, we try to answer the following questions-
--- Where the Data was generated ?
--- Where is the data stored?
+- Where the Data was generated ?
+-  Where is the data stored?
 
 Data was generated as result of business process of a E-commerce web based retailer which specializes on selling products related to
 sports such as bikes, clothings, gears and so on.
