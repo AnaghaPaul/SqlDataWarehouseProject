@@ -119,11 +119,14 @@ The data analysis process is structured into five stages:
 In this stage, we aim to understand the origin, storage, and context of the data. Key questions include:
 - Where was the data generated?
 -  Where is the data stored?
+  
 Answer:
 The data is generated as part of the business process of an e-commerce retailer that specializes in selling sports-related products, such as bikes, clothing, and gear.
+
 The data is stored in a Data Warehouse using a medallion architecture.
+
 The cleaned and analysis-ready data resides in the Gold layer, organized as the following objects:
- - dim.customers
+- dim.customers
 - dim.products
 - fact_sales
 
