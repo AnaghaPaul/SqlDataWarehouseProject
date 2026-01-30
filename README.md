@@ -114,6 +114,7 @@ The data analysis process is structured into five stages:
    - Clean
    - Shape
    - Analysis
+
 **Explore**
 In this stage, we aim to understand the origin, storage, and context of the data. Key questions include:
 - Where was the data generated?
