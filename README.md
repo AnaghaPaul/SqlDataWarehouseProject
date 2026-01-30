@@ -108,29 +108,28 @@ data-warehouse-project/
 ## Queries and Analysis
 ![DataAnalysisWorkFlow](docs/DataAnalysisWorkFlow.png)
 
-The data analysis is done in 5 stages 
+The data analysis process is structured into five stages:
    - Explore
    - Profile
    - Clean
    - Shape
    - Analysis
 **Explore**
-In this stage, we try to answer the following questions-
-- Where the Data was generated ?
+In this stage, we aim to understand the origin, storage, and context of the data. Key questions include:
+- Where was the data generated?
 -  Where is the data stored?
-
-Data was generated as result of business process of a E-commerce web based retailer which specializes on selling products related to
-sports such as bikes, clothings, gears and so on.
-The data is stored in the DataWarehouse database which follows a medallion architecture.
-The cleaned and analysis ready data is stored in the gold layer of the databse, as 3 objects or views.
-- dim.customers
+Answer:
+The data is generated as part of the business process of an e-commerce retailer that specializes in selling sports-related products, such as bikes, clothing, and gear.
+The data is stored in a Data Warehouse using a medallion architecture.
+The cleaned and analysis-ready data resides in the Gold layer, organized as the following objects:
+ - dim.customers
 - dim.products
 - fact_sales
 
 **Profile**
-In this stage, we try to answer the following questions-
--- Identifying the domain the data or business falls in
--- Checking unique values, distributions of records in dataset
+In this stage, we assess the quality and characteristics of the data to understand its usability. Key questions include:
+- What domain does the data/business fall under?
+- What are the distributions and uniqueness of the records?
 
 
 
