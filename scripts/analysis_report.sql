@@ -54,9 +54,7 @@ WHERE records > 1;
 -- The Data does not have any duplicates.
 -- ====================================================================================================================================
 -- Profile -- Null values
-SELECT Metric, Value
-FROM (
-    SELECT
+ SELECT
         COUNT(*) AS total_rows,
 		COUNT(order_number) AS order_number_filled,
 		COUNT(product_key) AS product_key_filled,
@@ -68,35 +66,11 @@ FROM (
         COUNT(quantity) AS quantity_filled,
         COUNT(price) AS price_filled
     FROM gold.fact_sales
-) AS t
-UNPIVOT (
-    Value FOR Metric IN (
-        total_rows,
-		order_number_filled,
-		product_key_filled,
-		customer_key_filled,
-        order_date_filled,
-        shipping_date_filled,
-        due_date_filled,
-        sales_amount_filled,
-        quantity_filled,
-        price_filled
-    )
-) AS up;
 
 /*RESULT :
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Metric	Value
-total_rows	60398
-order_number_filled	60398
-product_key_filled	60398
-customer_key_filled	60398
-order_date_filled	60379
-shipping_date_filled	60398
-due_date_filled	60398
-sales_amount_filled	60398
-quantity_filled	60398
-price_filled	60398
+total_rows	order_number_filled	product_key_filled	customer_key_filled	order_date_filled	shipping_date_filled	due_date_filled	sales_amount_filled	quantity_filled	price_filled
+60398		60398				60398				60398				60379				 60398					 60398			60398				60398			60398
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 */
 -->> Mising values in order date--19 values
@@ -107,6 +81,8 @@ At this stage, the rows should remain NULL to explicitly indicate invalid data.
 Any decision to correct or derive values should only be made after consulting with domain experts and,
 if required in the future, handled explicitly in ETL or stored as a separate derived field.*/
 -- ==================================================================================================================================
+-- Profile - Distributions
+	 
 SELECT 
 category, YEAR(fs.order_date) AS order_year,
 SUM(quantity) AS Total_quantity_sold,
