@@ -15,10 +15,11 @@ The cleaned and analysis ready data is stored in the gold layer of the databse, 
 - fact_sales
 */
 -- =====================================================================================================================================
--- >> Profile
+-- >> Profile 
 -- -------------------------------------------------------------------------------------------------------------------------------------
 -- Identifying the domain the data or business falls in
-/*The business is Ecommerce business model.*/
+-- >>The business is Ecommerce business model.
+-- Checking data quality
 -- -------------------------------------------------------------------------------------------------------------------------------------
 -- >>> Profile  ---- Detecting Duplicates
 SELECT COUNT(*)
