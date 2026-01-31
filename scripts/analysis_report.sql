@@ -14,15 +14,45 @@ The cleaned and analysis ready data is stored in the gold layer of the databse, 
 - dim.products
 - fact_sales
 */
--- ===================================================================================================================================
+-- =====================================================================================================================================
 -- >> Profile
+-- -------------------------------------------------------------------------------------------------------------------------------------
 -- Identifying the domain the data or business falls in
--- Checking unique values, distributions of records in dataset
-
 /*The business is Ecommerce business model.*/
+-- -------------------------------------------------------------------------------------------------------------------------------------
+-- >>> Profile  ---- Detecting Duplicates
+SELECT COUNT(*)
+FROM
+(SELECT 
+	order_number,
+	product_key,
+	customer_key,
+	order_date,
+	shipping_date,
+	due_date,
+	sales_amount,
+	quantity,
+	price,
+COUNT(*) as records
+FROM gold.fact_sales
+GROUP BY 
+	order_number,
+	product_key,
+	customer_key,
+	order_date,
+	shipping_date,
+	due_date,
+	sales_amount,
+	quantity,
+	price
+)a
+WHERE records > 1;
+--  RESULT :
+-- 0
 
--- column-level 
--- missing values
+-- The Data does not have any duplicates.
+-- ====================================================================================================================================
+-- Profile -- Null values
 SELECT Metric, Value
 FROM (
     SELECT
@@ -69,8 +99,11 @@ price_filled	60398
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 */
 -->> Mising values in order date--19 values
-
-
+/*Order dates were set to NULL intentionally due to invalid source values.
+For ad-hoc analysis, these rows are excluded rather than imputed to avoid introducing assumptions and misleading timestamps.
+Given that the number of affected rows is very small, correcting them is not necessary at this point.
+Any correction, if required in the future, should be handled explicitly in ETL or stored as a separate derived field.*/
+-- ==================================================================================================================================
 SELECT 
 category, YEAR(fs.order_date) AS order_year,
 SUM(quantity) AS Total_quantity_sold,
@@ -81,36 +114,6 @@ gold.dim_products AS dp
 ON fs.product_key=dp.product_key
 GROUP BY dp.category, YEAR(fs.order_date)
 ORDER BY order_year ASC,Total_revenue DESC, Total_quantity_sold DESC;
-
--- solution
--- Step 1: Calculate average shipping lag
-WITH avg_lag AS (
-    SELECT AVG(DATEDIFF(day, order_date, shipping_date)) AS avg_shipping_lag
-    FROM gold.fact_sales
-    WHERE order_date IS NOT NULL AND shipping_date IS NOT NULL
-),
-
--- Step 2: Replace missing order_date with shipping_date - average lag
-fact_sales_new AS (
-    SELECT
-        fs.order_number,
-        fs.product_key,
-        fs.customer_key,
-        COALESCE(
-            fs.order_date,
-            DATEADD(day, -al.avg_shipping_lag, fs.shipping_date)
-        ) AS order_date,
-        fs.shipping_date,
-        fs.due_date,
-        fs.sales_amount,
-        fs.quantity,
-        fs.price
-    FROM gold.fact_sales fs
-    CROSS JOIN avg_lag al
-)
-
-SELECT *
-FROM fact_sales_new;
 
 
 -- The following  sql script results can be used to visualize distributions of variables in the form of histograms or frequency distribution graphs 
@@ -127,7 +130,7 @@ GROUP BY dp.category
 ORDER BY Total_revenue DESC, Total_quantity_sold DESC;
 
 
-
+-- Analysis 
 
 /* The type of business is E-commerce , where  a visitor buys something from a web based retailer*/
 -- Before we do any further analysis , let's look the objective or aim of the business - where should the business focus ? 
