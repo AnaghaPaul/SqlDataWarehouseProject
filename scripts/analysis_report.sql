@@ -100,10 +100,12 @@ price_filled	60398
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 */
 -->> Mising values in order date--19 values
-/*Order dates were set to NULL intentionally due to invalid source values.
-For ad-hoc analysis, these rows are excluded rather than imputed to avoid introducing assumptions and misleading timestamps.
-Given that the number of affected rows is very small, correcting them is not necessary at this point.
-Any correction, if required in the future, should be handled explicitly in ETL or stored as a separate derived field.*/
+/*The order dates were set to NULL intentionally because the source values are invalid. 
+Updating them in ETL would require guessing a value, which would introduce assumptions and mask the fact that the original data was invalid. 
+This could mislead analysts, as they would have no visibility into the underlying data quality issue.
+At this stage, the rows should remain NULL to explicitly indicate invalid data.
+Any decision to correct or derive values should only be made after consulting with domain experts and,
+if required in the future, handled explicitly in ETL or stored as a separate derived field.*/
 -- ==================================================================================================================================
 SELECT 
 category, YEAR(fs.order_date) AS order_year,
