@@ -80,8 +80,35 @@ This could mislead analysts, as they would have no visibility into the underlyin
 At this stage, the rows should remain NULL to explicitly indicate invalid data.
 Any decision to correct or derive values should only be made after consulting with domain experts and,
 if required in the future, handled explicitly in ETL or stored as a separate derived field.*/
--- ==================================================================================================================================
+-- ======================================================================================================================================
 -- Profile - Distributions
+-- Checking Distributions or frequency checks
+-->> Objective
+-- allows to understand the range of values that exist in the data
+-- how often they occur
+-- whether there are nulls
+-- whether negative values exist alongside positive ones
+-- --------------------------------------------------------------------------------------------------------------------------------------
+-- order_number
+SELECT order_number,
+	 COUNT(*) AS frequency
+FROM gold.fact_sales
+GROUP BY
+order_number;
+-- The results can be visualized through techniques including stem-and-leaf plots, box plots, and histograms.
+-- Result (Note : Limited to 5 rows)
+/*
+order_number	frequency
+SO50818			1
+SO55367			4
+SO62535			3
+SO64083			3
+SO65048			2
+*/
+-- Insight >> Order_number is not a unique field, multiple products bought in single order is represented as multiple records.
+-- 		   >> This is the reason for the duplicates in the field.
+-- ----------------------------------------------------------------------------------------------------------------------------------------
+
 	 
 SELECT 
 category, YEAR(fs.order_date) AS order_year,
