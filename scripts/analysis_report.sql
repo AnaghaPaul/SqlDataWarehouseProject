@@ -19,8 +19,6 @@ The cleaned and analysis ready data is stored in the gold layer of the databse, 
 -- Identifying the domain the data or business falls in
 -- Checking unique values, distributions of records in dataset
 
--- most of the cleaning of data was done in warehouse itself and the resulted data is in gold layer
-
 /*The business is Ecommerce business model.*/
 
 -- column-level 
@@ -29,9 +27,10 @@ SELECT Metric, Value
 FROM (
     SELECT
         COUNT(*) AS total_rows,
+		COUNT(order_number) AS order_number_filled,
+		COUNT(product_key) AS product_key_filled,
+		COUNT(customer_key) AS customer_key_filled,
         COUNT(order_date) AS order_date_filled,
-        COUNT(customer_key) AS customer_filled,
-        COUNT(product_key) AS product_filled,
         COUNT(shipping_date) AS shipping_date_filled,
         COUNT(due_date) AS due_date_filled,
         COUNT(sales_amount) AS sales_amount_filled,
@@ -42,9 +41,10 @@ FROM (
 UNPIVOT (
     Value FOR Metric IN (
         total_rows,
+		order_number_filled,
+		product_key_filled,
+		customer_key_filled,
         order_date_filled,
-        customer_filled,
-        product_filled,
         shipping_date_filled,
         due_date_filled,
         sales_amount_filled,
@@ -53,17 +53,23 @@ UNPIVOT (
     )
 ) AS up;
 
-/*Metric	Value
+/*RESULT :
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Metric	Value
 total_rows	60398
+order_number_filled	60398
+product_key_filled	60398
+customer_key_filled	60398
 order_date_filled	60379
-customer_filled	60398
-product_filled	60398
 shipping_date_filled	60398
 due_date_filled	60398
 sales_amount_filled	60398
 quantity_filled	60398
-price_filled	60398*/
--->> Mising values in order date
+price_filled	60398
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+*/
+-->> Mising values in order date--19 values
+
 
 SELECT 
 category, YEAR(fs.order_date) AS order_year,
