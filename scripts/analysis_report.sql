@@ -251,9 +251,9 @@ customer_id	customer_number	first_name	last_name	country		marital_status	birthda
 WITH yearly_customers AS (
     SELECT DISTINCT
         customer_key,
-        YEAR(order_date) AS order_year
+        YEAR(shipping_date) AS shipping_year
     FROM gold.fact_sales
-    WHERE YEAR(order_date) IN (2013, 2014)
+    WHERE YEAR(shipping_date) IN (2013, 2014)
 )
 SELECT
     100.0 *
@@ -269,11 +269,11 @@ FROM yearly_customers y2013
   
 LEFT JOIN yearly_customers y2014
     ON y2013.customer_key = y2014.customer_key
-   AND y2014.order_year = 2014
-WHERE y2013.order_year = 2013;
+   AND y2014.shipping_year = 2014
+WHERE y2013.shipping_year = 2013;
 -- Result : 
 /* 
-1.88% < 40% 
+2.49 % < 40% 
 -- >>> E-Commerce type is aquisition mode, the buyers of this business usually do not repurchase the product,
 this may be due to the business selling one-time purchase products and customer does not need to up-grade soon.
 Loyalty programs are not good long-term investments, instead the company need to focus on acquiring new customers*/
@@ -281,43 +281,42 @@ Loyalty programs are not good long-term investments, instead the company need to
 WITH first_purchase AS (
     SELECT
         customer_key,
-        MIN(order_date) AS first_order_date
+        MIN(shipping_date) AS first_order_shipped_date
     FROM gold.fact_sales
     GROUP BY customer_key
 )
 , new_customers AS (
     SELECT
-        YEAR(first_order_date) AS acquisition_year,
+        YEAR(first_order_shipped_date) AS acquisition_year,
         COUNT(customer_key) AS new_customers
     FROM first_purchase
-    GROUP BY YEAR(first_order_date)
+    GROUP BY YEAR(first_order_shipped_date)
 )
 
 , active_customers AS (
     SELECT
-        YEAR(order_date) AS order_year,
+        YEAR(shipping_date) AS shipping_year,
         COUNT(DISTINCT customer_key) AS active_customers
     FROM gold.fact_sales
-    GROUP BY YEAR(order_date)
+    GROUP BY YEAR(shipping_date)
 )
 SELECT
-    a.order_year,
+    a.shipping_year,
     nc.new_customers,
     a.active_customers,
     ROUND((nc.new_customers * 1.0 / a.active_customers) * 100, 2) AS new_customer_rate_percent
 FROM active_customers a
 LEFT JOIN new_customers nc
-       ON a.order_year = nc.acquisition_year
-ORDER BY a.order_year;
+       ON a.shipping_year = nc.acquisition_year
+ORDER BY a.shipping_year;
 -- >>> Result :
 /*
 order_year	new_customers	active_customers	new_customer_rate_percent
-NULL		NULL			15					NULL
-2010		14				14					100.000000000000
-2011		2216			2216				100.000000000000
-2012		3225			3255				99.080000000000
-2013		12521			17427				71.850000000000
-2014		506				834					60.670000000000*/
+shipping_year	new_customers	active_customers	new_customer_rate_percent
+2011			2178			2178				100.000000000000
+2012			3220			3220				100.000000000000
+2013			12371			17207				71.900000000000
+2014			715				1202				59.480000000000*/
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------
 -- >> Key Business Metric: New Customer Growth
 -- (YoY)
