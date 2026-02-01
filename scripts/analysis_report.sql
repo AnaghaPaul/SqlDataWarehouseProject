@@ -80,7 +80,8 @@ Updating them in ETL would require guessing a value, which would introduce assum
 This could mislead analysts, as they would have no visibility into the underlying data quality issue.
 At this stage, the rows should remain NULL to explicitly indicate invalid data.
 Any decision to correct or derive values should only be made after consulting with domain experts and,
-if required in the future, handled explicitly in ETL or stored as a separate derived field.*/
+if required in the future, handled explicitly in ETL or stored as a separate derived field.
+Besides the shipping_date is available - In our business model,  the sales month is defined as the shipping month (the date the product leaves the warehouse and ownership transfers to the buyer). */
 -- ======================================================================================================================================
 -- Profile - Distributions
 -- Checking Distributions or frequency checks
