@@ -162,7 +162,6 @@ FROM (
 GROUP BY ntile;
 /*
 -- The results can be visualized through techniques including stem-and-leaf plots, box plots, and histograms.
--- Result (Note : Limited to 5 rows)
 -- >> Result :
 ntile	lower_bound	upper_bound	orders
 1		2			24			2766
