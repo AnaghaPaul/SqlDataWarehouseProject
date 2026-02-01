@@ -204,7 +204,7 @@ SO74163			15529			129
 WITH customer_metrics AS (
     SELECT
         customer_key,
-        MIN(YEAR(order_date)) AS acquisition_year,
+        MIN(YEAR(shipping_date)) AS acquisition_year,
         COUNT(DISTINCT order_number) AS no_of_orders,
         SUM(sales_amount) AS customer_lifetime_value
     FROM gold.fact_sales
@@ -230,12 +230,12 @@ ORDER BY dim_customers.customer_key;
 
 -- Result (Note : Limited to 5 rows)
 /*
-customer_id	customer_number	first_name	last_name	country			marital_status	birthdate		acquisition_year	no_of_orders	customer_lifetime_value
-11000		AW00011000		Jon			Yang		Australia		Married			1971-10-06		2011				3				8249
-11001		AW00011001		Eugene		Huang		Australia		Single			1976-05-10		2011				3				6384
-11002		AW00011002		Ruben		Torres		Australia		Married			1971-02-09		2011				3				8114
-11003		AW00011003		Christy		Zhu			Australia		Single			1973-08-14		2010				3				8139
-11004		AW00011004		Elizabeth	Johnson		Australia		Single			1979-08-05		2011				3				8196
+customer_id	customer_number	first_name	last_name	country		marital_status	birthdate		acquisition_year	no_of_orders	customer_lifetime_value
+11000		AW00011000		Jon			Yang		Australia	Married			1971-10-06		2011				3				8249
+11001		AW00011001		Eugene		Huang		Australia	Single			1976-05-10		2011				3				6384
+11002		AW00011002		Ruben		Torres		Australia	Married			1971-02-09		2011				3				8114
+11003		AW00011003		Christy		Zhu			Australia	Single			1973-08-14		2011				3				8139
+11004		AW00011004		Elizabeth	Johnson		Australia	Single			1979-08-05		2011				3				8196
 */
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------
 	 
@@ -405,6 +405,7 @@ gold.fact_sales
 GROUP BY YEAR(shipping_date)
 ORDER BY YEAR(shipping_date);
 -->>> Result :
+-- The result can be visualized using line plots to identify patterns and trends.
 /*
 sales_year	total_sales
 2011		6978386
@@ -437,6 +438,7 @@ gold.fact_sales
 GROUP BY YEAR(shipping_date), MONTH(shipping_date)
 ORDER BY YEAR(shipping_date), MONTH(shipping_date) ;
 -- >>> Result :
+-- The result can be visualized using line plots to identify patterns and trends.
 /*
 sales_year	sales_month	total_sales
 2011		january		406476
