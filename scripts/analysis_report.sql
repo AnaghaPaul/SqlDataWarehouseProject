@@ -189,8 +189,6 @@ ON fs.product_key=dp.product_key
 GROUP BY dp.category, YEAR(fs.order_date)
 ORDER BY order_year ASC,Total_revenue DESC, Total_quantity_sold DESC;
 
-
--- The following  sql script results can be used to visualize distributions of variables in the form of histograms or frequency distribution graphs 
 -- Distribution of overall sales of 
 SELECT 
 category,
