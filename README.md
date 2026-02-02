@@ -1,4 +1,6 @@
 # Modern E-Commerce Data Warehouse for Growth & Customer Analytics
+---
+## Project Overview
 
 This project showcases an end-to-end data lifecycle for an e-commerce retail business, transforming raw operational data into high-quality, analytics-ready insights that drive strategic, data-driven decision-making. The project is structured in **three key stages**:  
 
@@ -27,41 +29,17 @@ The analyzed datasets are visualized in **Power BI dashboards**, leveraging the 
 
 
 ---
-## 🏗️ Data Architecture
-
-The data architecture for this project follows Medallion Architecture **Bronze**, **Silver**, and **Gold** layers:
-![Data Architecture](docs/DataArchitecture.png)
-![Data Flow](docs/DataFlow.png)
-
-1. **Bronze Layer**: Stores raw data as-is from the source systems. Data is ingested from CSV Files into SQL Server Database.
-2. **Silver Layer**: This layer includes data cleansing, standardization, and normalization processes to prepare data for analysis.
-3. **Gold Layer**: Houses business-ready data modeled into a star schema required for reporting and analytics.
-
----
-## 📖 Project Overview
+## Stage 1 - Data Warehouse
+## 📖 Overview
 
 This project involves:
 
 1. **Data Architecture**: Designing a Modern Data Warehouse Using Medallion Architecture **Bronze**, **Silver**, and **Gold** layers.
 2. **ETL Pipelines**: Extracting, transforming, and loading data from source systems into the warehouse.
 3. **Data Modeling**: Developing fact and dimension tables optimized for analytical queries.
-4. **Analytics & Reporting**: Creating SQL-based reports and dashboards for actionable insights.
    
-
 ---
-
-## 🛠️ Important Links & Tools:
-
-- **[Datasets](datasets/):** Access to the project dataset (csv files).
-- **[SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads):** Lightweight server for hosting your SQL database.
-- **[SQL Server Management Studio (SSMS)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16):** GUI for managing and interacting with databases.
-- **[Git Repository](https://github.com/):** Set up a GitHub account and repository to manage, version, and collaborate on your code efficiently.
-- **[DrawIO](https://www.drawio.com/):** Design data architecture, models, flows, and diagrams.
-- **[Notion](https://www.notion.com/templates/sql-data-warehouse-project):** Get the Project Template from Notion.
-
----
-
-## 🚀 Project Requirements
+## 🚀 Requirements
 
 ### Building the Data Warehouse (Data Engineering)
 
@@ -77,15 +55,30 @@ Develop a modern data warehouse using SQL Server to consolidate sales data, enab
 
 ---
 
-### BI: Analytics & Reporting (Data Analysis)
+## 🏗️ Data Architecture
 
-#### Objective
-Develop SQL-based analytics to deliver detailed insights into:
-- **Customer Behavior**
-- **Product Performance**
-- **Sales Trends**
+The data architecture for this project follows Medallion Architecture **Bronze**, **Silver**, and **Gold** layers:
+![Data Architecture](docs/DataArchitecture.png)
 
-These insights empower stakeholders with key business metrics, enabling strategic decision-making.  
+1. **Bronze Layer**: Stores raw data as-is from the source systems. Data is ingested from CSV Files into SQL Server Database.
+2. **Silver Layer**: This layer includes data cleansing, standardization, and normalization processes to prepare data for analysis.
+3. **Gold Layer**: Houses business-ready data modeled into a star schema required for reporting and analytics.
+
+![Data Flow](docs/DataFlow.png)
+
+
+---
+
+## 🛠️ Important Links & Tools:
+
+- **[Datasets](datasets/):** Access to the project dataset (csv files).
+- **[SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads):** Lightweight server for hosting your SQL database.
+- **[SQL Server Management Studio (SSMS)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16):** GUI for managing and interacting with databases.
+- **[Git Repository](https://github.com/):** Set up a GitHub account and repository to manage, version, and collaborate on your code efficiently.
+- **[DrawIO](https://www.drawio.com/):** Design data architecture, models, flows, and diagrams.
+- **[Notion](https://www.notion.com/templates/sql-data-warehouse-project):** Get the Project Template from Notion.
+
+---  
 
 For more details, refer to [docs/requirements.md](docs/requirements.md).
 
@@ -117,8 +110,7 @@ data-warehouse-project/
 ```
 
 ---
-## Queries and Analysis
-![DataAnalysisWorkFlow](docs/DataAnalysisWorkFlow.png)
+## Satge 2- Queries and Analysis
 
 The data analysis process is structured into five stages:
    - Explore
@@ -127,76 +119,38 @@ The data analysis process is structured into five stages:
    - Shape
    - Analysis
 
-**Explore**
-In this stage, we aim to understand the origin, storage, and context of the data. Key questions include:
-- Where was the data generated?
--  Where is the data stored?
-  
-Answer:
-The data is generated as part of the business process of an e-commerce retailer that specializes in selling sports-related products, such as bikes, clothing, and gear.
+![DataAnalysisWorkFlow](docs/DataAnalysisWorkFlow.png)
 
-The data is stored in a Data Warehouse using a medallion architecture.
+## SQL-Based Data Analysis (Explore → Profile → Clean → Shape → Analyze)
 
-The cleaned and analysis-ready data resides in the Gold layer, organized as the following objects:
-- dim.customers
-- dim.products
-- fact_sales
+The data analysis process is structured into **five key stages**, building on the preliminary work already performed during the **data warehouse creation**. Each stage ensures that data is transformed from raw, operational form into high-quality, actionable insights:
 
-**Profile**
-In this stage, we assess the quality and characteristics of the data to understand its usability. Key questions include:
-- What domain does the data/business fall under?
-- What are the distributions and uniqueness of the records?
+1. **Explore**  
+   - Initial examination of datasets to understand structure, data types, and relationships.  
+   - Identify missing values, anomalies, and potential areas of interest for deeper analysis.  
+   - **Benefit:** Provides a clear overview of the data landscape, allowing analysts to plan transformations and validate assumptions efficiently.  
 
+2. **Profile**  
+   - Generate descriptive statistics (counts, distributions, percentiles) and identify patterns or inconsistencies.  
+   - Assess data quality metrics such as completeness, uniqueness, and consistency.  
+   - **Benefit:** Highlights data quality issues early, ensuring that downstream analysis is reliable and robust.  
 
+3. **Clean**  
+   - Handle missing or inconsistent data, remove duplicates, and standardize formats.  
+   - Correct errors and ensure that data adheres to business rules.  
+   - **Benefit:** Produces accurate, trustworthy datasets that prevent errors in analysis and reporting.  
 
+4. **Shape**  
+   - Transform and model data into analytical-ready structures, including aggregations, calculated metrics, and key business dimensions.  
+   - Leverage **star schema outputs from the data warehouse** for efficient querying and reporting.  
+   - **Benefit:** Simplifies analytical operations, reduces computational overhead, and ensures seamless integration with visualization tools like Power BI.  
 
-This section summarizes the key insights derived from the sales and customer data analysis for the e-commerce business:
+5. **Analyze**  
+   - Perform detailed exploratory and descriptive analysis to uncover insights on **customer behavior, product performance, and sales trends**.  
+   - Conduct **trend analysis** to identify seasonality, growth patterns, and revenue drivers over time.  
+   - **Benefit:** Enables data-driven decisions around marketing strategy, inventory management, and growth initiatives, providing actionable intelligence to business stakeholders.  
 
-**1. Business Model Insight**
-
-The annual repurchase rate is only 1.88%, which is far below the 40% threshold.
-
-This indicates the business operates in acquisition mode: most customers make one-time purchases, and repeat buying is rare.
-
-Implication: The company should prioritize customer acquisition campaigns over loyalty programs.
-
-**2. Customer Acquisition Patterns**
-
-Historical data shows that a large proportion of annual customers are new:
-
-For example, in 2013, 71.85% of active customers were new.
-
-Insight: The business relies heavily on acquiring new customers each year to sustain growth.
-
-**3. New Customer Growth Trends**
-
-Year-over-year (YoY) growth analysis shows:
-
-Rapid growth in new customers from 2010–2013.
-
-Apparent decline in 2014 due to partial-year data.
-
-Insight: Focus on complete-year trends or YTD growth to avoid misleading interpretations.
-
-**4. Key Business Metric Recommendation**
-
-New Customer Growth (YoY) should be tracked as the primary business metric, as it:
-
-Monitors overall business growth.
-
-Evaluates marketing effectiveness.
-
-Identifies seasonal or annual trends in customer acquisition.
-
-**5. Strategic Implications**
-
-Focus resources on:
-
-Marketing campaigns that attract new customers.
-
-Optimizing pricing and product offerings to maximize first-time purchases.
-
-Avoid investing heavily in loyalty programs that are unlikely to yield returns due to low repurchase rates.
+**Note:** Many of these steps, such as data cleansing and shaping, are partially completed during the **data warehouse ETL process**, ensuring that the SQL analysis starts from a reliable, curated dataset. This integration reduces redundant work, improves efficiency, and allows analysts to focus on higher-value insights.
 
 ## 🛡️ License
 
