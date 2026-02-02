@@ -91,3 +91,74 @@ sales_year	sales_month	total_sales
 2014		february	7708
 */
 -- -------------------------------------------------------------------------------------------------------------------------------------------------
+-- Total Sales per category (YoY)
+-- comparing components (total_sales per category)
+SELECT 
+	YEAR(s.shipping_date) AS sales_year,
+	p.category,
+	SUM(sales_amount) AS total_sales
+FROM gold.dim_products AS p
+JOIN
+gold.fact_sales AS s
+ON
+p.product_key = s.product_key
+WHERE category IN ('Accessories','Bikes','Clothing','Components') 
+GROUP BY YEAR(s.shipping_date),p.category
+ORDER BY YEAR(s.shipping_date),p.category;
+-- Note : category has Null values which have been omited at the moment by using WHERE clause.
+-- ================================================================================================================================================
+-- Result :
+-- ------------------------------------------------------------------------------------------------------------------------------------------------
+/*
+sales_year	category		total_sales
+2011		Bikes			6978386
+2012		Bikes			5800826
+2013		Accessories		658115
+2013		Bikes			15303477
+2013		Clothing		318371
+2014		Accessories		42147
+2014		Bikes			233583
+2014		Clothing		21345
+*/
+-- -------------------------------------------------------------------------------------------------------------------------------------------------
+-- Total Sales per category (MoM)
+-- comparing components (total_sales per category)
+SELECT 
+	YEAR(shipping_date) AS sales_year,
+	CASE MONTH(shipping_date)
+	WHEN 1 THEN 'january'
+	WHEN 2 THEN 'february'
+	WHEN 3 THEN 'march'
+	WHEN 4 THEN 'april'
+	WHEN 5 THEN 'may'
+	WHEN 6 THEN 'june'
+	WHEN 7 THEN 'july'
+	WHEN 8 THEN 'august'
+	WHEN 9 THEN 'september'
+	WHEN 10 THEN 'october'
+	WHEN 11 THEN 'november'
+	WHEN 12 THEN 'december'
+	END AS sales_month,
+	p.category,
+	SUM(sales_amount) AS total_sales
+FROM gold.dim_products AS p
+JOIN
+gold.fact_sales AS s
+ON
+p.product_key = s.product_key
+WHERE category IN ('Accessories','Bikes','Clothing','Components') 
+GROUP BY YEAR(shipping_date),MONTH(s.shipping_date),p.category
+ORDER BY YEAR(shipping_date),MONTH(s.shipping_date),p.category;
+-- Note : category has Null values which have been omited at the moment by using WHERE clause.
+-- ===========================================================================================================================================
+-- Result :
+-- Note : Result limited to 5 rows
+-- --------------------------------------------------------------------------------------------------------------------------------------------
+/*
+sales_year	sales_month		category	total_sales
+2011		january			Bikes		406476
+2011		february		Bikes		461058
+2011		march			Bikes		492253
+2011		april			Bikes		498552
+2011		may				Bikes		557262
+*/
