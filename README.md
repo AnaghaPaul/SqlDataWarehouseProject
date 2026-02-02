@@ -1,9 +1,30 @@
 # Modern E-Commerce Data Warehouse for Growth & Customer Analytics
-This project demonstrates an end-to-end data lifecycle for an e-commerce retail business, transforming raw operational data into analytics-ready insights that support strategic, data-driven decision-making.
 
-Data is ingested from multiple source systems and processed through structured ETL pipelines within a modern SQL Server–based data warehouse, following the Medallion Architecture (Bronze, Silver, Gold). Each layer incrementally improves data quality, structure, and usability, resulting in a clean, business-ready analytical model.
+This project showcases an end-to-end data lifecycle for an e-commerce retail business, transforming raw operational data into high-quality, analytics-ready insights that drive strategic, data-driven decision-making. The project is structured in **three key stages**:  
 
-The curated data is analyzed using SQL and Power BI to understand customer behavior, product performance, and sales trends across a diverse product catalog. These insights enable the business to evaluate growth dynamics, identify revenue drivers, and make informed decisions around customer acquisition strategy, pricing, and investment allocation, supporting effective and sustainable business growth.
+## 1. Data Warehouse Creation (Medallion Architecture)
+Data is ingested from multiple source systems and processed through structured **ETL pipelines** in a **SQL Server–based data warehouse**, designed using the **Medallion Architecture (Bronze, Silver, Gold)**.
+
+- **Bronze Layer:** Raw data is ingested in its original format to preserve source fidelity.  
+- **Silver Layer:** Data is cleansed, standardized, and enriched, ensuring consistency and removing duplicates.  
+- **Gold Layer:** Business-ready, curated datasets are modeled using a **star schema** optimized for analytical queries and reporting in Power BI.  
+
+**Benefit:** This layered approach improves data quality incrementally, supports scalable analytics, and reduces the risk of errors in downstream business reporting. The star schema design ensures **fast query performance**, simplified joins, and easy integration with visualization tools, accelerating decision-making.  
+
+## 2. SQL-Based Data Analysis (Explore → Profile → Clean → Shape → Analyze)
+Curated data is explored, profiled, cleaned, and shaped using **SQL transformations** to derive actionable business insights. Key analytical focus areas include:  
+
+- **Customer Behavior Analysis:**  
+- **Product Performance Evaluation:**  
+- **Revenue & Growth Dynamics:**
+
+**Benefit:** Structured SQL analysis ensures **accurate, reproducible insights** and allows stakeholders to understand key operational drivers, optimize marketing strategies, and enhance customer engagement.  
+
+## 3. Power BI Visualization
+The analyzed datasets are visualized in **Power BI dashboards**, leveraging the **star-schema data model** to enable efficient slicing, dicing, and drill-down capabilities. Visualizations include interactive charts, KPIs, and trend analysis for products, sales, and customer segments.  
+
+**Benefit:** Decision-makers gain a **clear, interactive view of business performance**, enabling data-driven strategy around pricing, promotions, customer acquisition, and investment allocation, ultimately supporting sustainable growth and profitability.
+
 
 ---
 ## 🏗️ Data Architecture
