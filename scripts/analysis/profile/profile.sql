@@ -160,3 +160,29 @@ ntile	lower_bound	upper_bound	orders
 9		2352		2451		2766
 10		2451		3578		2765
 */
+-- =================================================================================================================================
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>dim_products>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+--category (Frequency Distribution)
+SELECT
+	category,
+	COUNT(*) AS frequency
+FROM gold.dim_products
+GROUP BY category;
+-- =================================================================================================================================
+-- Result :
+-- The results can be visualized through techniques including stem-and-leaf plots, box plots, and histograms.
+-- --------------------------------------------------------------------------------------------------------------------------------
+/*
+category		frequency
+NULL			7
+Accessories		29
+Bikes			97
+Clothing		35
+Components		127
+*/
+-- There are 7 Null values in category.
+-- From filtering the null values and looking further , the 7 products are pedals of somekind, after consulting with experts it can be may be classified into components.
+-- This then can be updated in silver layer and the data quality issue can be raised.
+-- ================================================================================================================================
+
+
