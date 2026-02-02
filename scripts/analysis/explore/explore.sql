@@ -109,4 +109,29 @@ sales_amount  	int          	NULL
 quantity      	int          	NULL
 price	          int          	NULL
 */
+-- ----------------------------------------------------------------------------------------------------------------------------------
+-- Quering number of records in each views
+SELECT COUNT(*) AS records
+FROM gold.dim_customers
+
+UNION ALL
+
+SELECT COUNT(*) AS records
+FROM gold.dim_products
+
+UNION ALL
+
+SELECT COUNT(*) AS records
+FROM gold.fact_sales
+
+*/
+-- ===================================================================================================================================
+-- Result:
+-- -----------------------------------------------------------------------------------------------------------------------------------
+/*
+records
+18484
+295
+60398
+*/
 
