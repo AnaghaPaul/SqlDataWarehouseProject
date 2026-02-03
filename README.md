@@ -71,10 +71,7 @@ The designing of dimensional model is done in 4 steps :
 - **Identify the Dimensions**
 - **Identify the facts**
 
-
-Declare Grain
-one row per scan of an individual product within a customer’s sales transaction.
-
+**Grain** : one row per scan of an individual product within a customer’s sales transaction.
 
 ![Data Flow](docs/DataFlow.png)
 ---
