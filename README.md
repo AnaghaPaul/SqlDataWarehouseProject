@@ -64,9 +64,19 @@ The data architecture for this project follows Medallion Architecture **Bronze**
 2. **Silver Layer**: This layer includes data cleansing, standardization, and normalization processes to prepare data for analysis.
 3. **Gold Layer**: Houses business-ready data modeled into a star schema required for reporting and analytics.
 
+## Dimensional Design Process
+The designing of dimensional model is done in 4 steps :
+- **Select Business Process**
+- **Declare Grain**
+- **Identify the Dimensions**
+- **Identify the facts**
+
+
+Declare Grain
+one row per scan of an individual product within a customer’s sales transaction.
+
+
 ![Data Flow](docs/DataFlow.png)
-
-
 ---
 
 ## 🛠️ Important Links & Tools:
