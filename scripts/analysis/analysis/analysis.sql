@@ -126,7 +126,11 @@ p.product_key = s.product_key
 WHERE category IN ('Accessories','Bikes','Clothing','Components') 
 GROUP BY YEAR(s.shipping_date),p.category
 ORDER BY YEAR(s.shipping_date),p.category;
+-- !!!!!!!!! ATTENTION (DATA QUALITY ISSUE)-- suggestion for process improvement 
 -- Note : category has Null values which have been omited at the moment by using WHERE clause.
+-- While profile stage , it was found from detailed inspection of the null values that the products were pedals of somekind which can be classified as components.
+-- This can be either corrected at ETL level, but after discussed with domain experts as to avoid assumption and to flag data quality issue.
+-- If corrected in ETL, the where clause can be avoided entirely, which can save time and increase efficiency.
 -- ================================================================================================================================================
 -- Result :
 -- ------------------------------------------------------------------------------------------------------------------------------------------------
