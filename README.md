@@ -65,13 +65,44 @@ The data architecture for this project follows Medallion Architecture **Bronze**
 3. **Gold Layer**: Houses business-ready data modeled into a star schema required for reporting and analytics.
 
 ## Dimensional Design Process
-The designing of dimensional model is done in 4 steps :
+The dimensional model was designed using a structured four-step approach aligned with Kimball best practices:
 - **Select Business Process**
+  
+The selected business process is e-commerce sales transactions, representing the end-to-end flow of customer purchases, including order placement and product shipment.
+
 - **Declare Grain**
+
+Each row in the fact table represents one scan of an individual product within a customer’s sales transaction (i.e., a single order line item).
+
+This grain supports detailed analysis of customer purchasing behavior, product performance, and transaction-level metrics.
 - **Identify the Dimensions**
+
+The following dimensions were identified to provide descriptive context for the sales fact data:
+   - Product Dimension:
+
+     Derived from source product systems and includes product attributes such as category, subcategory, and product line.
+     
+   - Customer Dimension
+     
+     Derived from source customer systems and includes customer demographics and geographic attributes.
+     
+   - Time Dimension
+     
+     Created within the data warehouse to support consistent and flexible time-based analysis across multiple date attributes (order date, shipping date, due date).
+        
 - **Identify the facts**
 
-**Grain** : one row per scan of an individual product within a customer’s sales transaction.
+The central fact table captures sales measures at the declared grain, including:
+
+- Sales amount
+  
+- Quantity sold
+
+- Unit price
+  
+These measures enable analysis of revenue, order value, product performance, and sales trends over time.
+
+
 
 ![Data Flow](docs/DataFlow.png)
 ---
