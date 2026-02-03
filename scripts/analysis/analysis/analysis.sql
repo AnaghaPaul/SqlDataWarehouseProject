@@ -90,6 +90,27 @@ sales_year	sales_month	total_sales
 2014		january		289367
 2014		february	7708
 */
+-- ----------------------------------------------------------------------------------------------------------------------------------------------
+
+--Sales Trend (YoY) - for visualization -line chart
+-- For plotting keeping the number of variables to two is better for efficiency
+SELECT
+	DATEFROMPARTS(YEAR(shipping_date), MONTH(shipping_date), 1) AS month_start,
+	SUM(sales_amount) as total_sales
+FROM
+gold.fact_sales
+GROUP BY DATEFROMPARTS(YEAR(shipping_date), MONTH(shipping_date), 1)
+ORDER BY DATEFROMPARTS(YEAR(shipping_date), MONTH(shipping_date), 1) ;
+-- -----------------------------------------------------------------------------------------------------------------------------------------------
+-- Result: (limited to 5 rows for convenience)
+/*
+month_start	total_sales
+2011-01-01	406476
+2011-02-01	461058
+2011-03-01	492253
+2011-04-01	498552
+2011-05-01	557262
+*/
 -- -------------------------------------------------------------------------------------------------------------------------------------------------
 -- Total Sales per category (YoY)
 -- comparing components (total_sales per category)
