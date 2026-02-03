@@ -1,13 +1,13 @@
 BEGIN TRY
-    IF OBJECT_ID ('gold.dim_date','U') IS  NOT NULL
-	DROP TABLE gold.dim_date;
+    IF OBJECT_ID ('gold.dwh_dim_date','U') IS  NOT NULL
+	DROP TABLE gold.dwh_dim_date;
 END TRY
 
 BEGIN CATCH
     /*No Action*/
 END CATCH
 
-CREATE TABLE gold.dim_date
+CREATE TABLE gold.dwh_dim_date
 (
     [DateKey] INT primary key, 
     [Date] DATETIME,
@@ -140,7 +140,7 @@ BEGIN
 
 /* Populate Your Dimension Table with values*/
     
-    INSERT INTO gold.dim_date
+    INSERT INTO gold.dwh_dim_date
     SELECT
         
         CONVERT (char(8),@CurrentDate,112) as 'DateKey',
