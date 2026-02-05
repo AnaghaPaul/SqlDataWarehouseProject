@@ -91,3 +91,47 @@ CREATE VIEW gold.fact_sales AS
   ON		  sd.sls_prd_key = pr.product_number
   LEFT JOIN gold.dim_customers cu
   ON		  sd.sls_cust_id = cu.customer_id;
+
+-- ======================================================================================
+  -- Create Dimension Date
+  -- =======================================================================================
+
+IF OBJECT_ID('gold.dim_date','V') IS NOT NULL
+    DROP VIEW gold.dim_date;
+GO
+  CREATE VIEW gold.dim_date AS
+  SELECT
+  	DateKey, 
+    Date,
+    FullDate,-- Date in MM-dd-yyyy format
+    DayOfMonth, -- Field will hold day number of Month
+    DaySuffix, -- Apply suffix as 1st, 2nd ,3rd etc
+    DayName, -- Contains name of the day, Sunday, Monday 
+    DayOfWeek,-- First Day Sunday=1 and Saturday=7
+    DayOfWeekInMonth, --1st Monday or 2nd Monday in Month
+    DayOfWeekInYear,
+    DayOfQuarter, 
+    DayOfYear,
+    WeekOfMonth,-- Week Number of Month 
+    WeekOfQuarter, --Week Number of the Quarter
+    WeekOfYear,--Week Number of the Year
+    Month, --Number of the Month 1 to 12
+    MonthName,--January, February etc
+    MonthOfQuarter,-- Month Number belongs to Quarter
+    Quarter,
+    QuarterName,--First,Second..
+    Year,-- Year value of Date stored in Row
+    YearName, --CY 2012,CY 2013
+    MonthYear, --Jan-2013,Feb-2013
+    MMYYYY,
+    FirstDayOfMonth,
+    LastDayOfMonth,
+    FirstDayOfQuarter,
+    LastDayOfQuarter,
+    FirstDayOfYear,
+    LastDayOfYear,
+    IsHoliday,-- Flag 1=National Holiday, 0-No National Holiday
+    IsWeekday,-- 0=Week End ,1=Week Day
+    HolidayName--Name of Holiday in US
+	
+  FROM silver.dwh_calendar_table
