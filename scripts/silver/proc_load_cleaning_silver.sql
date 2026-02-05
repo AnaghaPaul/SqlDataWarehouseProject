@@ -444,5 +444,3 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			 PRINT '==============================================='
 		END CATCH			
 	END
-
-	EXEC silver.load_silver;
