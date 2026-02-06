@@ -19,7 +19,8 @@ A dimensional (star schema) model is implemented with clearly defined fact and d
 
 ## Datasource
 The data warehouse integrates data from CRM and ERP source systems, reflecting common enterprise data flows.
-1) CRM (Customer Relationship Management)
+
+:one:CRM (Customer Relationship Management)
 
 The CRM system provides customer-related information used to build the Customer dimension, including:
 
@@ -31,7 +32,7 @@ The CRM system provides customer-related information used to build the Customer 
 
 - This data supports customer profiling, segmentation, and retention analysis.
 
-2) ERP (Enterprise Resource Planning)
+:two: ERP (Enterprise Resource Planning)
 
 The ERP system supplies operational and transactional data, including:
 - Product Master Data
@@ -74,20 +75,17 @@ Customers are located across multiple countries, including:
 
 This allows for regional and country-level sales analysis.
 
-
-
-
 The project is structured in **three key stages**:  
 
-## 1. Data Warehouse Creation (Medallion Architecture)
+##  DataWarehouse Creation (Medallion Architecture)
 
 This project implements a SQL Server–based Retail & Order Management Data Warehouse using the Medallion Architecture (Bronze, Silver, Gold). Data is ingested from multiple CRM and ERP source systems and processed through structured, iterative ETL pipelines to support evolving business and analytical requirements.
 
-**Bronze Layer**: Raw CRM and ERP data is ingested in its original format to preserve source fidelity and enable traceability.
+:one: **Bronze Layer**: Raw CRM and ERP data is ingested in its original format to preserve source fidelity and enable traceability.
 
-**Silver Layer**: Data is cleansed, standardized, deduplicated, and conformed across sources, including the creation of reusable reference data such as the calendar table.
+:two: **Silver Layer**: Data is cleansed, standardized, deduplicated, and conformed across sources, including the creation of reusable reference data such as the calendar table.
 
-**Gold Layer**: Business-ready datasets are curated using a star schema, including fact tables and conformed dimensions (Customer, Product,and a role-playing Date dimension) optimized for analytical queries and Power BI reporting.
+:three: **Gold Layer**: Business-ready datasets are curated using a star schema, including fact tables and conformed dimensions (Customer, Product,and a role-playing Date dimension) optimized for analytical queries and Power BI reporting.
 
 Benefit:
 This layered, iterative approach incrementally improves data quality, simplifies maintenance, and supports scalable analytics. The star schema design enables efficient joins, fast query performance, and seamless integration with BI tools, ensuring reliable and performant business reporting.
@@ -133,8 +131,7 @@ Develop a modern data warehouse using SQL Server to consolidate sales data, enab
 - **Documentation**: Provide clear documentation of the data model to support both business stakeholders and analytics teams.
 
 ---
-
-## 🏗️ Data Architecture
+## Data Architecture
 
 The data architecture for this project follows Medallion Architecture **Bronze**, **Silver**, and **Gold** layers:
 ![Data Architecture](docs/DataArchitecture.png)
