@@ -5,7 +5,7 @@ to  populate the 'silver' schema tables from 'bronze' schema.
 Actions performed: 
 -Truncates Silver tables.
 -Inserts transformed and cleansed data from Bronze into silver tables.
--Populate calendar table
+-Populate dim_date table
 Warning : The script will truncate any existing data in the table, so execute with precaution.
 ===============================================================================
 Parameters:
@@ -18,23 +18,28 @@ Usage Example:
 
 CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 	BEGIN
-		DECLARE @start_load_time DATETIME, @end_load_time DATETIME, @batch_start_time DATETIME , @batch_end_time DATETIME;
+		DECLARE @start_load_time DATETIME, @end_load_time DATETIME, @batch_start_time DATETIME , @batch_end_time DATETIME; -- start_load_time, end_load time, batch_start time, batch_end_time
 	    BEGIN TRY
 			SET @batch_start_time = GETDATE();
 	
-			PRINT '==========================================';
+			PRINT '=================================================================================================';
 			PRINT 'Loading Silver Layer';
-			PRINT '==========================================';
-			PRINT '------------------------------------------';
+			PRINT '=================================================================================================';
+			PRINT 'Loading Source Derived Tables - Customer Relationship Management and Enterprise Resource Planning';
+			PRINT '==================================================================================================';
+			PRINT '--------------------------------------------------------------------------------------------------';
 			PRINT 'Loading CRM Tables';
-			PRINT '------------------------------------------';
+			PRINT '-------------------------------------------------------------------------------------------------';
+-- ==========================================================================
+-- Truncating and Inserting Data into silver.crm_cust_info
+			PRINT '>>Preparing to truncate and load silver.crm_cust_info';
 	
 			SET @start_load_time = GETDATE();
-	
+-- Truncate	
 			PRINT'>> Truncating Table : silver.crm_cust_info';
 			TRUNCATE TABLE silver.crm_cust_info;
 			PRINT'>> Inserting Data Into : silver.crm_cust_info';
-			
+-- Insert
 			INSERT INTO silver.crm_cust_info (
 						cst_id, 
 						cst_key, 
@@ -70,16 +75,21 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 					WHERE flag_last = 1; -- Select the most recent record per customer
 	
 			SET @end_load_time = GETDATE();
+			PRINT '>>Loading to silver.crm_cust_info completed successfully';
 			PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
-			PRINT '>>-----------------'
+			PRINT '-------------------------------------------------------------------------------------------------';
+-- Loding completed for silver.crm_cust_info
+-- ===================================================================================================================
+-- Truncating and Inserting Data into silver.crm_prd_info
+			PRINT '>>Preparing to truncate and load silver.crm_prd_info';
 			
 			-- crm_prd_info
 			SET @start_load_time = GETDATE();
-				
+-- Truncate				
 			PRINT'>> Truncating Table : silver.crm_prd_info';
 			TRUNCATE TABLE silver.crm_prd_info;
 			PRINT'>> Inserting Data Into : silver.crm_prd_info';
-					
+-- Insert					
 			INSERT INTO silver.crm_prd_info (
 						prd_id,
 						cat_id,
@@ -112,17 +122,20 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 	
 	
 			SET @end_load_time = GETDATE();
+			PRINT '>>Loading to silver.crm_prod_info completed successfully';
 			PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
-			PRINT '>>-----------------'
+			PRINT '-------------------------------------------------------------------------------------------------';
+-- ---------------------------------------------------------------------------------------------------------------------
 			
 			--crm_sales_details
+			PRINT '>>Preparing to truncate and load silver.crm_sales';
 	
 			SET @start_load_time = GETDATE();
-	
+-- Truncate
 			PRINT'>> Truncating Table : silver.crm_sales_details';
 			TRUNCATE TABLE silver.crm_sales_details;
 			PRINT'>> Inserting Data Into : silver.crm_sales_details';
-			
+-- Insert			
 			INSERT INTO silver.crm_sales_details (
 						sls_ord_num,
 						sls_prd_key,
@@ -166,12 +179,14 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			FROM bronze.crm_sales_details;
 	
 			SET @end_load_time = GETDATE();
-	
+			PRINT '>>Loading to silver.crm_sales_details completed successfully';
 			PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
-			PRINT '>>-----------------'
+			PRINT '-------------------------------------------------------------------------------------------------';
 	
-				
-	    
+			PRINT '>> CRM Tables loaded successfully.';
+			PRINT '=================================================================================================';
+
+-- =========================================================================================================================
 			--ERP Tables
 			PRINT '------------------------------------------';
 			PRINT 'Loading ERP Tables';
@@ -179,11 +194,14 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			
 			
 			--erp_cust_az12
+			PRINT '>>Preparing to truncate and load silver.erp_cust_az12';
 			SET @start_load_time = GETDATE();
+-- Truncate
 			PRINT'>> Truncating Table : silver.erp_cust_az12';
 			TRUNCATE TABLE silver.erp_cust_az12;
-			PRINT'>> Inserting Data Into : silver.erp_cust_az12';
 			
+-- Insert	
+			PRINT'>> Inserting Data Into : silver.erp_cust_az12';
 			INSERT INTO silver.erp_cust_az12(cid, bdate, gen)
 				SELECT 
 				
@@ -200,15 +218,19 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 					 ELSE 'n/a'
 				END AS gen
 			FROM bronze.erp_cust_az12;
-	
+
 			SET @end_load_time = GETDATE();
+			PRINT '>>Loading to silver.erp_cust_az12 completed successfully';
 			PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
-			PRINT '>>-----------------'
-			
+			PRINT '-------------------------------------------------------------------------------------------------';
+-- ---------------------------------------------------------------------------------------------------------------------------				
 			--erp_loc_a101
+			PRINT '>>Preparing to truncate and load silver.erp_loc_a101';
 			SET @start_load_time = GETDATE();
+-- Truncate
 			PRINT'>> Truncating Table : silver.erp_loc_a101';
 			TRUNCATE TABLE silver.erp_loc_a101;
+-- Insert
 			PRINT'>> Inserting Data Into : silver.erp_loc_a101';
 			
 			INSERT INTO silver.erp_loc_a101(cid,cntry)
@@ -223,16 +245,19 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			FROM bronze.erp_loc_a101;
 	
 			SET @end_load_time = GETDATE();
+			PRINT '>>Loading to silver.erp_loc_a101 completed successfully';
 			PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
-			PRINT '>>-----------------'
+			PRINT '-------------------------------------------------------------------------------------------------';
+-- ----------------------------------------------------------------------------------------------------------------------
 			
 			--erp_px_cat_g1v2
+			PRINT '>>Preparing to truncate and load silver.erp_px_cat_g1v2';
 			SET @start_load_time = GETDATE();
-	
+	-- Truncate
 			PRINT'>> Truncating Table : silver.erp_px_cat_g1v2';
 			TRUNCATE TABLE silver.erp_px_cat_g1v2;
 			PRINT'>> Inserting Data Into : silver.erp_px_cat_g1v2';
-			
+	-- Insert		
 			INSERT INTO silver.erp_px_cat_g1v2(
 				id,
 				cat,
@@ -248,27 +273,54 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			FROM bronze.erp_px_cat_g1v2;
 	
 			SET @end_load_time = GETDATE();
+			PRINT '>>Loading to silver.erp_px_cat_g1v2 completed successfully';
 			PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
-			PRINT '>>-----------------'
+			PRINT '-------------------------------------------------------------------------------------------------';
+			PRINT '>>ERP tables truncated and loaded successfully.';
+			PRINT '=================================================================================================';
+			PRINT '>> All source derived tables are truncated and loaded successfully.';
+			PRINT '=================================================================================================';
 
-			-- calendar table added - updated on 02-04-2026
+			
+-- ----------------------------------------------------------------------------------------------------------------------------
+-- Truncating and Populating dwh_dim_date
+/*  Rebuild Date Dimension (dwh_dim_date)
 
-			--dwh_calendar_table
+   - Truncates and reloads the Date dimension with standardized calendar
+     attributes.
+   - Acts as a conformed dimension reused across multiple business dates
+     (order, shipping, due).
+
+   Benefits:
+   - Consistent time intelligence across the warehouse
+   - Simplified joins and faster analytical queries
+   - Centralized date logic for reporting and BI consumption */
+-- calendar table added - updated on 02-06-2026
+			PRINT'>>Preparing to truncate and populate dwh_dim_date.'
+
+--dwh_dim_date
+			-- SET NOCOUNT ON stops SQL Server from sending the message 
+			-- indicating the number of rows affected by T-SQL statements.
 			SET NOCOUNT ON;
-
+			PRINT'>>NOCOUNT set On'
+				
 			SET @start_load_time = GETDATE();
+-- Truncate
 	
-			PRINT'>> Truncating Table : silver.dwh_calendar_table';
-			TRUNCATE TABLE silver.dwh_calendar_table;
-			PRINT'>> Inserting Data Into : silver.dwh_calendar_table';
-			-- Populating calendar table
+			PRINT'>> Truncating Table : silver.dwh_dim_date';
+			TRUNCATE TABLE silver.dwh_dim_date;
+			PRINT'>> Inserting Data Into : silver.dwh_dim_date';
+			-- Populating date dimension table
 			-- =======================================================================================
 			--Specify Start Date and End date here
 			--Value of Start Date Must be Less than Your End Date 
 			--=========================================================================================
 
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			DECLARE @StartDate DATETIME = '12/29/2014' --Starting value of Date Range
 			DECLARE @EndDate DATETIME = '01/01/2100' --End Value of Date Range
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			PRINT'>> The dwh_dim_date will be populated from ' + CAST(@StartDate AS NVARCHAR) + 'to ' + CAST(CAST(@EndDate AS NVARCHAR))+'.';
 
 			--Temporary Variables To Hold the Values During Processing of Each Date of Year
 			DECLARE
@@ -357,7 +409,7 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 
 			/* Populate Your Dimension Table with values*/
     
-				INSERT INTO silver.dwh_calendar_table
+				INSERT INTO silver.dwh_dim_date
 
 				SELECT
         
@@ -423,8 +475,10 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 				END
 	
 			SET @end_load_time = GETDATE();
+			PRINT '>>dwh_dim_date populated successfully'
+
 			PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
-			PRINT '>>-----------------'
+			PRINT '---------------------------------------------------------------------------------------------------------------'
 	
 			SET @batch_end_time=GETDATE();
 			PRINT '---------------------------------------------------------------------------------------------------------------'
@@ -432,7 +486,7 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			PRINT '---------------------------------------------------------------------------------------------------------------'
 	
 			PRINT '>>Total Load Duration for silver layer:' +CAST(DATEDIFF(second,@batch_start_time,@batch_end_time) AS NVARCHAR)+ ' seconds';
-			PRINT '>>-----------------'	
+			PRINT '---------------------------------------------------------------------------------------------------------------'
 
 		END TRY
 		BEGIN CATCH
