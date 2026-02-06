@@ -320,7 +320,7 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			DECLARE @StartDate DATETIME = '12/29/2014' --Starting value of Date Range
 			DECLARE @EndDate DATETIME = '01/01/2100' --End Value of Date Range
 -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			PRINT'>> The dwh_dim_date will be populated from ' + CAST(@StartDate AS NVARCHAR) + 'to ' + CAST(CAST(@EndDate AS NVARCHAR))+'.';
+			PRINT '>> The dwh_dim_date will be populated from ' + CAST(@StartDate AS NVARCHAR(30))  + ' to ' + CAST(@EndDate AS NVARCHAR(30)) + '.';
 
 			--Temporary Variables To Hold the Values During Processing of Each Date of Year
 			DECLARE
