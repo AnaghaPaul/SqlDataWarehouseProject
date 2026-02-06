@@ -98,10 +98,10 @@ CREATE TABLE silver.erp_px_cat_g1v2(
 
 
 -- Calendar table (generated in datawarehouse, not derived from source data)
-IF OBJECT_ID('silver.dwh_calendar_table', 'U') IS NOT NULL
-    DROP TABLE silver.dwh_calendar_table
+IF OBJECT_ID('silver.dwh_dim_date', 'U') IS NOT NULL
+    DROP TABLE silver.dwh_dim_date
 
-CREATE TABLE silver.dwh_calendar_table
+CREATE TABLE silver.dwh_dim_date
 (
     [DateKey] INT primary key, 
     [Date] DATETIME,
