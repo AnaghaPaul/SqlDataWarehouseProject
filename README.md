@@ -1,17 +1,96 @@
-# Modern E-Commerce Data Warehouse for Growth & Customer Analytics
+# Modern Retail & Order Management Data Warehouse using SQL Server
 ---
 ## Project Overview
 
-This project showcases an end-to-end data lifecycle for an e-commerce retail business, transforming raw operational data into high-quality, analytics-ready insights that drive strategic, data-driven decision-making. The project is structured in **three key stages**:  
+This project focuses on building a modern Retail & Order Management Data Warehouse for a company selling bicycles, sports clothing, and related components across multiple international markets.
+The business operates in a retail / e-commerce–style model, managing customer orders, product catalogs, pricing, quantities, and fulfillment timelines.
+
+The data warehouse is designed to support:
+
+- Sales performance analysis
+
+- Customer behavior and segmentation
+
+- Product and category-level reporting
+
+- Order lifecycle tracking (order, shipping, and due dates)
+
+A dimensional (star schema) model is implemented with clearly defined fact and dimension tables, including a role-playing Date dimension to enable time-based analytics across different business events.
+
+## Datasource
+The data warehouse integrates data from CRM and ERP source systems, reflecting common enterprise data flows.
+1) CRM (Customer Relationship Management)
+
+The CRM system provides customer-related information used to build the Customer dimension, including:
+
+- Customer identifiers and business keys
+
+- Personal attributes (name, gender, marital status)
+
+- Customer creation and lifecycle details
+
+- This data supports customer profiling, segmentation, and retention analysis.
+
+2) ERP (Enterprise Resource Planning)
+
+The ERP system supplies operational and transactional data, including:
+- Product Master Data
+
+Product details such as name, cost, product line, and lifecycle dates
+
+Product categories and subcategories
+
+- Sales & Order Transactions
+
+Order numbers and line-level sales data
+
+Order, shipping, and due dates
+
+Sales amounts, quantities, and pricing
+
+- Customer Demographics & Geography
+
+Customer birth date and gender
+
+Customer country and location information
+
+These sources enable end-to-end analysis of the order-to-delivery process and provide a unified view of sales operations.
+
+## Geographic coverage
+
+Customers are located across multiple countries, including:
+
+- Canada
+
+- United States
+
+- United Kingdom
+
+- Germany
+
+- France
+
+- Australia
+
+This allows for regional and country-level sales analysis.
+
+
+
+
+The project is structured in **three key stages**:  
 
 ## 1. Data Warehouse Creation (Medallion Architecture)
-Data is ingested from multiple source systems and processed through structured **ETL pipelines** in a **SQL Server–based data warehouse**, designed using the **Medallion Architecture (Bronze, Silver, Gold)**.
 
-- **Bronze Layer:** Raw data is ingested in its original format to preserve source fidelity.  
-- **Silver Layer:** Data is cleansed, standardized, and enriched, ensuring consistency and removing duplicates.  
-- **Gold Layer:** Business-ready, curated datasets are modeled using a **star schema** optimized for analytical queries and reporting in Power BI.  
+This project implements a SQL Server–based Retail & Order Management Data Warehouse using the Medallion Architecture (Bronze, Silver, Gold). Data is ingested from multiple CRM and ERP source systems and processed through structured, iterative ETL pipelines to support evolving business and analytical requirements.
 
-**Benefit:** This layered approach improves data quality incrementally, supports scalable analytics, and reduces the risk of errors in downstream business reporting. The star schema design ensures **fast query performance**, simplified joins, and easy integration with visualization tools, accelerating decision-making.  
+**Bronze Layer**: Raw CRM and ERP data is ingested in its original format to preserve source fidelity and enable traceability.
+
+**Silver Layer**: Data is cleansed, standardized, deduplicated, and conformed across sources, including the creation of reusable reference data such as the calendar table.
+
+**Gold Layer**: Business-ready datasets are curated using a star schema, including fact tables and conformed dimensions (Customer, Product,and a role-playing Date dimension) optimized for analytical queries and Power BI reporting.
+
+Benefit:
+This layered, iterative approach incrementally improves data quality, simplifies maintenance, and supports scalable analytics. The star schema design enables efficient joins, fast query performance, and seamless integration with BI tools, ensuring reliable and performant business reporting.
 
 ## 2. SQL-Based Data Analysis (Explore → Profile → Clean → Shape → Analyze)
 Curated data is explored, profiled, cleaned, and shaped using **SQL transformations** to derive actionable business insights. Key analytical focus areas include:  
@@ -65,30 +144,67 @@ The data architecture for this project follows Medallion Architecture **Bronze**
 3. **Gold Layer**: Houses business-ready data modeled into a star schema required for reporting and analytics.
 
 ## Dimensional Design Process
-The dimensional model was designed using a structured four-step approach aligned with Kimball best practices:
-- **Select Business Process**
-  
-The selected business process is e-commerce sales transactions, representing the end-to-end flow of customer purchases, including order placement and product shipment.
+The dimensional model was designed using a structured, iterative four-step approach aligned with Kimball dimensional modeling best practices. The goal was to create a scalable and analytics-friendly model that supports retail and order management reporting.
 
-- **Declare Grain**
+ ** :one: 1) Select Business Process**
+ 
+The selected business process is retail order management and sales transactions, representing the end-to-end lifecycle of a customer purchase.
+This includes order placement, fulfillment, and delivery timelines, enabling analysis across ordering, shipping, and due dates.
 
-Each row in the fact table represents one scan of an individual product within a customer’s sales transaction (i.e., a single order line item).
+**2) Declare Grain**
 
-This grain supports detailed analysis of customer purchasing behavior, product performance, and transaction-level metrics.
-- **Identify the Dimensions**
+The grain of the fact table is defined at the individual order line item level.
 
-The following dimensions were identified to provide descriptive context for the sales fact data:
-   - Product Dimension:
+Each row in the fact table represents:
 
-     Derived from source product systems and includes product attributes such as category, subcategory, and product line.
-     
-   - Customer Dimension
-     
-     Derived from source customer systems and includes customer demographics and geographic attributes.
-     
-   - Time Dimension
-     
-     Created within the data warehouse to support consistent and flexible time-based analysis across multiple date attributes (order date, shipping date, due date).
+*One product*
+
+*Purchased by one customer*
+
+*Within a single sales order*
+
+This granular design supports detailed analysis of:
+
+*Customer purchasing behavior*
+
+*Product-level performance*
+
+*Transaction-level revenue and quantity metrics*
+
+**3) Identify the Dimensions**
+
+*Product Dimension*
+
+Derived from ERP product master data and enriched with product attributes such as:
+
+- Product name
+
+- Product line
+
+- Category and subcategory
+
+- Product lifecycle dates
+
+*Customer Dimension*
+
+Derived from CRM and ERP sources and includes:
+
+- Customer identifiers and demographics
+
+- Gender and birth date
+
+- Geographic attributes such as country
+
+*Date Dimension (Role-Playing)*
+A single, conformed Date dimension created within the data warehouse and reused across multiple business roles:
+
+- Order Date
+
+- Shipping Date
+
+- Due Date
+
+This design enables consistent and flexible time-based analysis without duplicating date structures.
         
 - **Identify the facts**
 
