@@ -143,12 +143,12 @@ The data architecture for this project follows Medallion Architecture **Bronze**
 ## Dimensional Design Process
 The dimensional model was designed using a structured, iterative four-step approach aligned with Kimball dimensional modeling best practices. The goal was to create a scalable and analytics-friendly model that supports retail and order management reporting.
 
- ** :one: 1) Select Business Process**
+ :one: *Select Business Process*
  
 The selected business process is retail order management and sales transactions, representing the end-to-end lifecycle of a customer purchase.
 This includes order placement, fulfillment, and delivery timelines, enabling analysis across ordering, shipping, and due dates.
 
-**2) Declare Grain**
+:two: *Declare Grain*
 
 The grain of the fact table is defined at the individual order line item level.
 
@@ -168,7 +168,7 @@ This granular design supports detailed analysis of:
 
 *Transaction-level revenue and quantity metrics*
 
-**3) Identify the Dimensions**
+:three: *Identify the Dimensions*
 
 *Product Dimension*
 
