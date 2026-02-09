@@ -132,7 +132,5 @@ CREATE TABLE silver.dwh_dim_date
     [LastDayOfQuarter] DATE,
     [FirstDayOfYear] DATE,
     [LastDayOfYear] DATE,
-    [IsHoliday] BIT,-- Flag 1=National Holiday, 0-No National Holiday
     [IsWeekday] BIT,-- 0=Week End ,1=Week Day
-    [HolidayName] VARCHAR(50),--Name of Holiday in US
 );
