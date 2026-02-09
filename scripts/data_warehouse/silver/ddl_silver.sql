@@ -134,3 +134,22 @@ CREATE TABLE silver.dwh_dim_date
     last_day_of_year DATE,
     is_weekday BIT,-- 0=Week End ,1=Week Day
 );
+-- -----------------------------------------------------------------------------------------------------------------------------
+-- Supplementary Calendar Dimension(generated in datawarehouse)
+-- Stores geography-specific calendar attributes (holidays, holiday type, seasons).
+-- Designed to extend the core Date dimension without duplicating it.
+-- Joined contextually using date_key and customer country.
+
+CREATE TABLE silver.dwh_dim_supplementary_calendar(
+date_key INT NOT NULL,
+country CHAR(2) NOT NULL,
+holiday_flag BIT NOT NULL,
+religious_holiday_flag BIT NOT NULL,
+holiday_name VARCHAR(100) NULL,
+season VARCHAR(20) NOT NULL
+	CONSTRAINT pk_dim_supplementary_calendar
+		PRIMARY KEY (date_key, country),
+	CONSTRAINT fk_calendar_date
+		FOREIGN KEY (date_key)
+		REFERENCES silver.dwh_dim_date(date_key)
+);
