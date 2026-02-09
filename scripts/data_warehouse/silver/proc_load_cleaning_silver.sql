@@ -459,7 +459,6 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 					DATEADD(QQ, DATEDIFF(QQ, -1, @CurrentDate), -1) AS 'LastDayOfQuarter',
 					CONVERT(DATETIME, '01/01/' + CONVERT(VARCHAR, DATEPART(YY, @CurrentDate))) AS 'FirstDayOfYear',
 					CONVERT(DATETIME, '12/31/' + CONVERT(VARCHAR, DATEPART(YY, @CurrentDate))) AS 'LastDayOfYear',
-					NULL AS 'IsHoliday',
 					CASE DATEPART(DW, @CurrentDate)
 						WHEN 1 THEN 0
 						WHEN 2 THEN 1
@@ -468,8 +467,7 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 						WHEN 5 THEN 1
 						WHEN 6 THEN 1
 						WHEN 7 THEN 0
-					END AS 'IsWeekday',
-					NULL AS 'HolidayName'
+					END AS 'IsWeekday'
 
 				SET @CurrentDate = DATEADD(DD, 1, @CurrentDate)
 				END
