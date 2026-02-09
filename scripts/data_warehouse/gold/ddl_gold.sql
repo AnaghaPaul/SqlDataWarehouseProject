@@ -134,9 +134,7 @@ GO
     LastDayOfQuarter AS order_last_day_of_quarter,
     FirstDayOfYear AS order_first_day_of_year,
     LastDayOfYear AS order_last_day_of_year,
-    IsHoliday AS order_is_holiday,-- Flag 1=National Holiday, 0-No National Holiday
-    IsWeekday AS order_is_weekday,-- 0=Week End ,1=Week Day
-    HolidayName AS order_holiday_name--Name of Holiday in US
+    IsWeekday AS order_is_weekday-- 0=Week End ,1=Week Day
 	
   FROM silver.dwh_dim_date
 
@@ -177,9 +175,7 @@ GO
     LastDayOfQuarter AS shipping_last_day_of_quarter,
     FirstDayOfYear AS shipping_first_day_of_year,
     LastDayOfYear AS shipping_last_day_of_year,
-    IsHoliday AS shipping_is_holiday,-- Flag 1=National Holiday, 0-No National Holiday
-    IsWeekday AS shipping_is_weekday,-- 0=Week End ,1=Week Day
-    HolidayName AS shipping_holiday_name--Name of Holiday in US
+    IsWeekday AS shipping_is_weekday-- 0=Week End ,1=Week Day
 	
   FROM silver.dwh_dim_date
 -- ---------------------------------------------------------------------------------------------------------------------------------
@@ -219,8 +215,6 @@ GO
     LastDayOfQuarter AS due_last_day_of_quarter,
     FirstDayOfYear AS due_first_day_of_year,
     LastDayOfYear AS due_last_day_of_year,
-    IsHoliday AS due_is_holiday,-- Flag 1=National Holiday, 0-No National Holiday
-    IsWeekday AS due_is_weekday,-- 0=Week End ,1=Week Day
-    HolidayName AS due_holiday_name--Name of Holiday in US
+    IsWeekday AS due_is_weekday-- 0=Week End ,1=Week Day
 	
   FROM silver.dwh_dim_date
