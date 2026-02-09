@@ -317,92 +317,92 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			--=========================================================================================
 
 -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			DECLARE @StartDate DATETIME = '12/29/2014' --Starting value of Date Range
-			DECLARE @EndDate DATETIME = '01/01/2100' --End Value of Date Range
+			DECLARE @start_date DATETIME = '12/29/2014' --Starting value of Date Range
+			DECLARE @end_date DATETIME = '01/01/2100' --End Value of Date Range
 -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			PRINT '>> The dwh_dim_date will be populated from ' + CAST(@StartDate AS NVARCHAR(30))  + ' to ' + CAST(@EndDate AS NVARCHAR(30)) + '.';
+			PRINT '>> The dwh_dim_date will be populated from ' + CAST(@start_date AS NVARCHAR(30))  + ' to ' + CAST(@end_date AS NVARCHAR(30)) + '.';
 
 			--Temporary Variables To Hold the Values During Processing of Each Date of Year
 			DECLARE
-				@DayOfWeekInMonth INT,
-				@DayOfWeekInYear INT,
-				@DayOfQuarter INT,
-				@WeekOfMonth INT,
-				@CurrentYear INT,
-				@CurrentMonth INT,
-				@CurrentQuarter INT
+				@day_of_week_in_month INT,
+				@day_of_week_in_year INT,
+				@day_of_quarter INT,
+				@week_of_month INT,
+				@current_year INT,
+				@current_month INT,
+				@current_quarter INT
 
 			/*Table Data type to store the day of week count for the month and year*/
-			DECLARE @DayOfWeek TABLE
+			DECLARE @day_of_week TABLE
 			(
-				DOW INT,
-				MonthCount INT,
-				QuarterCount INT,
-				YearCount INT
+				dow INT,
+				month_count INT,
+				quarter_count INT,
+				year_count INT
 			)
 
-			INSERT INTO @DayOfWeek VALUES (1, 0, 0, 0)
-			INSERT INTO @DayOfWeek VALUES (2, 0, 0, 0)
-			INSERT INTO @DayOfWeek VALUES (3, 0, 0, 0)
-			INSERT INTO @DayOfWeek VALUES (4, 0, 0, 0)
-			INSERT INTO @DayOfWeek VALUES (5, 0, 0, 0)
-			INSERT INTO @DayOfWeek VALUES (6, 0, 0, 0)
-			INSERT INTO @DayOfWeek VALUES (7, 0, 0, 0)
+			INSERT INTO @day_of_week VALUES (1, 0, 0, 0)
+			INSERT INTO @day_of_week VALUES (2, 0, 0, 0)
+			INSERT INTO @day_of_week VALUES (3, 0, 0, 0)
+			INSERT INTO @day_of_week VALUES (4, 0, 0, 0)
+			INSERT INTO @day_of_week VALUES (5, 0, 0, 0)
+			INSERT INTO @day_of_week VALUES (6, 0, 0, 0)
+			INSERT INTO @day_of_week VALUES (7, 0, 0, 0)
 
 			--Extract and assign various parts of Values from Current Date to Variable
 
-			DECLARE @CurrentDate AS DATETIME = @StartDate
-			SET @CurrentMonth = DATEPART(MM, @CurrentDate)
-			SET @CurrentYear = DATEPART(YY, @CurrentDate)
-			SET @CurrentQuarter = DATEPART(QQ, @CurrentDate)
+			DECLARE @current_date AS DATETIME = @start_date
+			SET @current_month = DATEPART(MM, @current_date)
+			SET @current_year = DATEPART(YY, @current_date)
+			SET @current_quarter = DATEPART(QQ, @current_date)
 
 			/********************************************************************************************/
 			--Proceed only if Start Date(Current date) is less than End date you specified above
 
-			WHILE @CurrentDate < @EndDate
+			WHILE @current_date < @end_date
 			/*Begin day of week logic*/
 			BEGIN
 				/*Check for Change in Month of the Current date if Month changed then 
 				Change variable value*/
-				IF @CurrentMonth != DATEPART(MM, @CurrentDate) 
+				IF @current_month != DATEPART(MM, @current_date) 
 				BEGIN
-					UPDATE @DayOfWeek
-					SET [MonthCount] = 0
-					SET @CurrentMonth = DATEPART(MM, @CurrentDate)
+					UPDATE @day_of_week
+					SET [month_count] = 0
+					SET @current_month = DATEPART(MM, @current_date)
 				END
 
 				/* Check for Change in Quarter of the Current date if Quarter changed then change 
 					Variable value*/
-				IF @CurrentQuarter != DATEPART(QQ, @CurrentDate)
+				IF @current_quarter != DATEPART(QQ, @current_date)
 				BEGIN
-					UPDATE @DayOfWeek
-					SET [QuarterCount] = 0
-					SET @CurrentQuarter = DATEPART(QQ, @CurrentDate)
+					UPDATE @day_of_week
+					SET [quarter_count] = 0
+					SET @current_quarter = DATEPART(QQ, @current_date)
 				END
 
 				/* Check for Change in Year of the Current date if Year changed then change 
 					Variable value*/
-				IF @CurrentYear != DATEPART(YY, @CurrentDate)
+				IF @current_year != DATEPART(YY, @current_date)
 				BEGIN
-					UPDATE @DayOfWeek
-					SET YearCount = 0
-					SET @CurrentYear = DATEPART(YY, @CurrentDate)
+					UPDATE @day_of_week
+					SET year_count = 0
+					SET @current_year = DATEPART(YY, @current_date)
 				END
 
 				-- Set values in table data type created above from variables
-				UPDATE @DayOfWeek
+				UPDATE @day_of_week
 				SET 
-					MonthCount = MonthCount + 1,
-					QuarterCount = QuarterCount + 1,
-					YearCount = YearCount + 1
-				WHERE DOW = DATEPART(DW, @CurrentDate)
+					month_count = month_count + 1,
+					quarter_count = quarter_count + 1,
+					year_count = year_count + 1
+				WHERE dow = DATEPART(DW, @current_date)
 
 				SELECT
-					@DayOfWeekInMonth = MonthCount,
-					@DayOfQuarter = QuarterCount,
-					@DayOfWeekInYear = YearCount
-				FROM @DayOfWeek
-				WHERE DOW = DATEPART(DW, @CurrentDate)
+					@day_of_week_in_month = month_count,
+					@day_of_quarter = quarter_count,
+					@day_of_week_in_year = year_count
+				FROM @day_of_week
+				WHERE dow = DATEPART(DW, @current_date)
     
 			/*End day of week logic*/
 
@@ -413,53 +413,53 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 
 				SELECT
         
-					CONVERT (char(8),@CurrentDate,112) as 'DateKey',
-					@CurrentDate AS 'Date',
-					CONVERT (char(10),@CurrentDate,101) as 'FullDate',
-					DATEPART(DD, @CurrentDate) AS 'DayOfMonth',
+					CONVERT (char(8),@current_date,112) as 'date_key',
+					@current_date AS 'date',
+					CONVERT (char(10),@current_date,101) as 'full_date',
+					DATEPART(DD, @current_date) AS 'day_of_month',
 					--Apply Suffix values like 1st, 2nd 3rd etc..
 					CASE 
-						WHEN DATEPART(DD,@CurrentDate) IN (11,12,13) THEN CAST(DATEPART(DD,@CurrentDate) AS VARCHAR) + 'th'
-						WHEN RIGHT(DATEPART(DD,@CurrentDate),1) = 1 THEN CAST(DATEPART(DD,@CurrentDate) AS VARCHAR) + 'st'
-						WHEN RIGHT(DATEPART(DD,@CurrentDate),1) = 2 THEN CAST(DATEPART(DD,@CurrentDate) AS VARCHAR) + 'nd'
-						WHEN RIGHT(DATEPART(DD,@CurrentDate),1) = 3 THEN CAST(DATEPART(DD,@CurrentDate) AS VARCHAR) + 'rd'
-						ELSE CAST(DATEPART(DD,@CurrentDate) AS VARCHAR) + 'th' 
-					END AS 'DaySuffix',
+						WHEN DATEPART(DD,@current_date) IN (11,12,13) THEN CAST(DATEPART(DD,@current_date) AS VARCHAR) + 'th'
+						WHEN RIGHT(DATEPART(DD,@current_date),1) = 1 THEN CAST(DATEPART(DD,@current_date) AS VARCHAR) + 'st'
+						WHEN RIGHT(DATEPART(DD,@current_date),1) = 2 THEN CAST(DATEPART(DD,@current_date) AS VARCHAR) + 'nd'
+						WHEN RIGHT(DATEPART(DD,@current_date),1) = 3 THEN CAST(DATEPART(DD,@current_date) AS VARCHAR) + 'rd'
+						ELSE CAST(DATEPART(DD,@current_date) AS VARCHAR) + 'th' 
+					END AS 'day_suffix',
         
-					DATENAME(DW, @CurrentDate) AS 'DayName',
-					DATEPART(DW, @CurrentDate) AS 'DayOfWeek',
-					@DayOfWeekInMonth AS 'DayOfWeekInMonth',
-					@DayOfWeekInYear AS 'DayOfWeekInYear',
-					@DayOfQuarter AS 'DayOfQuarter',
-					DATEPART(DY, @CurrentDate) AS 'DayOfYear',
-					DATEPART(WW, @CurrentDate) + 1 - DATEPART(WW, CONVERT(VARCHAR, DATEPART(MM, @CurrentDate)) + '/1/' + CONVERT(VARCHAR, DATEPART(YY, @CurrentDate))) AS 'WeekOfMonth',
-					(DATEDIFF(DD, DATEADD(QQ, DATEDIFF(QQ, 0, @CurrentDate), 0), @CurrentDate) / 7) + 1 AS 'WeekOfQuarter',
-					DATEPART(WW, @CurrentDate) AS 'WeekOfYear',
-					DATEPART(MM, @CurrentDate) AS 'Month',
-					DATENAME(MM, @CurrentDate) AS 'MonthName',
+					DATENAME(DW, @current_date) AS 'day_name',
+					DATEPART(DW, @current_date) AS 'day_of_week',
+					@day_of_week_in_month AS 'day_of_week_in_month',
+					@day_of_week_in_year AS 'day_of_week_in_year',
+					@day_of_quarter AS 'day_of_quarter',
+					DATEPART(DY, @current_date) AS 'day_of_year',
+					DATEPART(WW, @current_date) + 1 - DATEPART(WW, CONVERT(VARCHAR, DATEPART(MM, @current_date)) + '/1/' + CONVERT(VARCHAR, DATEPART(YY, @current_date))) AS 'week_of_month',
+					(DATEDIFF(DD, DATEADD(QQ, DATEDIFF(QQ, 0, @current_date), 0), @current_date) / 7) + 1 AS 'week_of_quarter',
+					DATEPART(WW, @current_date) AS 'week_of_year',
+					DATEPART(MM, @current_date) AS 'month',
+					DATENAME(MM, @current_date) AS 'month_name',
 					CASE
-						WHEN DATEPART(MM, @CurrentDate) IN (1, 4, 7, 10) THEN 1
-						WHEN DATEPART(MM, @CurrentDate) IN (2, 5, 8, 11) THEN 2
-						WHEN DATEPART(MM, @CurrentDate) IN (3, 6, 9, 12) THEN 3
-					END AS 'MonthOfQuarter',
-					DATEPART(QQ, @CurrentDate) AS 'Quarter',
-					CASE DATEPART(QQ, @CurrentDate)
+						WHEN DATEPART(MM, @current_date) IN (1, 4, 7, 10) THEN 1
+						WHEN DATEPART(MM, @current_date) IN (2, 5, 8, 11) THEN 2
+						WHEN DATEPART(MM, @current_date) IN (3, 6, 9, 12) THEN 3
+					END AS 'month_of_quarter',
+					DATEPART(QQ, @current_date) AS 'quarter',
+					CASE DATEPART(QQ, @current_date)
 						WHEN 1 THEN 'First'
 						WHEN 2 THEN 'Second'
 						WHEN 3 THEN 'Third'
 						WHEN 4 THEN 'Fourth'
-					END AS 'QuarterName',
-					DATEPART(YEAR, @CurrentDate) AS 'Year',
-					'CY ' + CONVERT(VARCHAR, DATEPART(YEAR, @CurrentDate)) AS 'YearName',
-					LEFT(DATENAME(MM, @CurrentDate), 3) + '-' + CONVERT(VARCHAR, DATEPART(YY, @CurrentDate)) AS 'MonthYear',
-					RIGHT('0' + CONVERT(VARCHAR, DATEPART(MM, @CurrentDate)),2) + CONVERT(VARCHAR, DATEPART(YY, @CurrentDate)) AS 'MMYYYY',
-					CONVERT(DATETIME, CONVERT(DATE, DATEADD(DD, - (DATEPART(DD, @CurrentDate) - 1), @CurrentDate))) AS 'FirstDayOfMonth',
-					CONVERT(DATETIME, CONVERT(DATE, DATEADD(DD, - (DATEPART(DD, (DATEADD(MM, 1, @CurrentDate)))), DATEADD(MM, 1, @CurrentDate)))) AS 'LastDayOfMonth',
-					DATEADD(QQ, DATEDIFF(QQ, 0, @CurrentDate), 0) AS 'FirstDayOfQuarter',
-					DATEADD(QQ, DATEDIFF(QQ, -1, @CurrentDate), -1) AS 'LastDayOfQuarter',
-					CONVERT(DATETIME, '01/01/' + CONVERT(VARCHAR, DATEPART(YY, @CurrentDate))) AS 'FirstDayOfYear',
-					CONVERT(DATETIME, '12/31/' + CONVERT(VARCHAR, DATEPART(YY, @CurrentDate))) AS 'LastDayOfYear',
-					CASE DATEPART(DW, @CurrentDate)
+					END AS 'quarter_name',
+					DATEPART(YEAR, @current_date) AS 'year',
+					'CY ' + CONVERT(VARCHAR, DATEPART(YEAR, @current_date)) AS 'year_name',
+					LEFT(DATENAME(MM, @current_date), 3) + '-' + CONVERT(VARCHAR, DATEPART(YY, @current_date)) AS 'month_year',
+					RIGHT('0' + CONVERT(VARCHAR, DATEPART(MM, @current_date)),2) + CONVERT(VARCHAR, DATEPART(YY, @current_date)) AS 'mmyyy',
+					CONVERT(DATETIME, CONVERT(DATE, DATEADD(DD, - (DATEPART(DD, @current_date) - 1), @current_date))) AS 'first_day_of_month',
+					CONVERT(DATETIME, CONVERT(DATE, DATEADD(DD, - (DATEPART(DD, (DATEADD(MM, 1, @current_date)))), DATEADD(MM, 1, @current_date)))) AS 'last_day_of_month',
+					DATEADD(QQ, DATEDIFF(QQ, 0, @current_date), 0) AS 'first_day_of_quarter',
+					DATEADD(QQ, DATEDIFF(QQ, -1, @current_date), -1) AS 'last_day_of_quarter',
+					CONVERT(DATETIME, '01/01/' + CONVERT(VARCHAR, DATEPART(YY, @current_date))) AS 'first_day_of_year',
+					CONVERT(DATETIME, '12/31/' + CONVERT(VARCHAR, DATEPART(YY, @current_date))) AS 'last_day_of_year',
+					CASE DATEPART(DW, @current_date)
 						WHEN 1 THEN 0
 						WHEN 2 THEN 1
 						WHEN 3 THEN 1
@@ -467,9 +467,9 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 						WHEN 5 THEN 1
 						WHEN 6 THEN 1
 						WHEN 7 THEN 0
-					END AS 'IsWeekday'
+					END AS 'is_weekday'
 
-				SET @CurrentDate = DATEADD(DD, 1, @CurrentDate)
+				SET @current_date = DATEADD(DD, 1, @current_date)
 				END
 	
 			SET @end_load_time = GETDATE();
