@@ -62,98 +62,187 @@ BEGIN
 		-- January
 		-- ---------------------------------------------------------------------------------
 
-		-- New Year's Day: January 1
-		IF MONTH(@current_date) = 1 AND DAY(@current_date) = 1
-		BEGIN
-			SET @holiday_flag = 1;
-			SET @religious_holiday_flag = 0;
-			SET @holiday_name = 'New Year''s Day';
-		END
-      
-		---- Blue Monday : 3rd monday of january
-		ELSE IF @country IN ('US','CA','GB') 
-			 AND MONTH(@current_date) = 1 
-			 AND DATEPART(WEEKDAY, @current_date) = 2
-			 AND ((DAY(@current_date) - 1) / 7) + 1 = 3
-		BEGIN
-			SET @holiday_flag = 1;-- ?
-			SET @religious_holiday_flag = 0;
-			SET @holiday_name = 'Blue Monday';
+			-- New Year's Day: January 1
+			IF MONTH(@current_date) = 1 AND DAY(@current_date) = 1
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag = 0;
+				SET @holiday_name = 'New Year''s Day';
 			END
-        
-		-- ---------------------------------------------------------------------
-		-- February
-		-- ---------------------------------------------------------------------
-		-- Black history month-starts from february 1 (need to be added)
-
-        
-		-- Galentine's day
-		ELSE IF MONTH(@current_date)= 2 AND DAY(@current_date)= 13
-		BEGIN
-			SET @holiday_flag = 1;
-			SET @religious_holiday_flag=0;
-			SET @holiday_name = 'Galentines day'
-		END
-        
-		-- Valentine's Day
-		ELSE IF MONTH(@current_date)=2 AND DAY(@current_date) =14
-		BEGIN
-			SET @holiday_flag = 1;
-			SET @religious_holiday_flag =0;
-			SET @holiday_name='Valentines Day'
-		END
+	      
+			---- Blue Monday : 3rd monday of january
+			ELSE IF @country IN ('United States','Canada','Germany') 
+				 AND MONTH(@current_date) = 1 
+				 AND DATEPART(WEEKDAY, @current_date) = 2
+				 AND ((DAY(@current_date) - 1) / 7) + 1 = 3
+			BEGIN
+				SET @holiday_flag = 1;-- ?
+				SET @religious_holiday_flag = 0;
+				SET @holiday_name = 'Blue Monday';
+				END
+	        
+			-- ---------------------------------------------------------------------
+			-- February
+			-- ---------------------------------------------------------------------
+			-- Black history month-starts from february 1 (need to be added)
+	
+	        
+			-- Galentine's day
+			ELSE IF MONTH(@current_date)= 2 AND DAY(@current_date)= 13
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag=0;
+				SET @holiday_name = 'Galentines day';
+			END
+	        
+			-- Valentine's Day
+			ELSE IF MONTH(@current_date)=2 AND DAY(@current_date) =14
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag =0;
+				SET @holiday_name='Valentines Day';
+			END
 
     -- -----------------------------------------------------------------------
-		--March
-		-- ------------------------------------------------------------------------
-    -- International Women's Day March 8
-    ELSE IF MONTH(@current_date) = 3 AND DAY(@current_date) = 8
-    BEGIN
-        SET @holiday_flag = 1;
-        SET @religious_holiday_flag = 0;
-        SET @holiday_name = 'International Womens Day'
-    END
-          
-    -- First Day of spring
-    ELSE IF MONTH(@current_date) = 3 AND DAY(@current_date) = 20
-    BEGIN
-          SET @holiday_flag = 1;
-          SET @religious_holiday_flag = 0;
-          SET @holiday_name = 'First Day of Spring'
-    END
+	--March
+	-- ------------------------------------------------------------------------
+	    -- International Women's Day March 8
+		    ELSE IF MONTH(@current_date) = 3 AND DAY(@current_date) = 8
+		    BEGIN
+		        SET @holiday_flag = 1;
+		        SET @religious_holiday_flag = 0;
+		        SET @holiday_name = 'International Womens Day';
+		    END
+		          
+		    -- First Day of spring : March 20
+		    ELSE IF MONTH(@current_date) = 3 AND DAY(@current_date) = 20
+		    BEGIN
+		          SET @holiday_flag = 1;
+		          SET @religious_holiday_flag = 0;
+		          SET @holiday_name = 'First Day of Spring';
+		    END
     -- --------------------------------------------------------------------
     -- April
     -- --------------------------------------------------------------------
-		-- International Labor Day: May 1
-		ELSE IF MONTH(@current_date) = 5 AND DAY(@current_date) = 1
-		BEGIN
-			SET @holiday_flag = 1;
-			SET @religious_holiday_flag = 0;
-			SET @holiday_name = 'International Labor Day';
-		END
+			-- April Fool's Day : April 1
+			ELSE IF MONTH(@current_date) = 4 AND DAY(@current_date) = 1
+			BEGIN
+				  SET @holiday_flag = 1;
+				  SET @religious_holiday_flag = 0;
+				  SET @holiday_name = 'April Fools Day';
+			END
+			-- Easter weekend  (need to be added)
 
-    -- 
-		-- Christmas: December 25
-		ELSE IF MONTH(@current_date) = 12 AND DAY(@current_date) = 25
-		BEGIN
-			SET @holiday_flag = 1;
-			SET @religious_holiday_flag = 1;
-			SET @holiday_name = 'Christmas Day';
-		END
-		-- Boxing Day: December 26 (common in UK, Canada, Australia)
-		ELSE IF MONTH(@current_date) = 12 AND DAY(@current_date) = 26
-		BEGIN
-			SET @holiday_flag = 1;
-			SET @religious_holiday_flag = 0;
-			SET @holiday_name = 'Boxing Day';
-		END
+			-- Earth Day - April 22
+			ELSE IF MONTH(@current_date) = 4 AND DAY(@current_date) = 22
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag = 0;
+				SET @holiday_name = 'Earth Day';
+			END
+	-- ---------------------------------------------------------------------
+	--  May
+	-- ---------------------------------------------------------------------
+			-- International Labor Day: May 1
+			ELSE IF MONTH(@current_date) = 5 AND DAY(@current_date) = 1
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag = 0;
+				SET @holiday_name = 'International Labor Day';
+			END
+					
+			-- Mother's Day (aside from UK-march) -- 2nd sunday of may
+			ELSE IF @country IN ('United States', 'Canada', 'Germany','France','Australia')
+			AND DATEPART(WEEKDAY, @current_date) = 1
+			AND ((DAY(@current_date) - 1) / 7) + 1 = 2
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag = 0;
+				SET @holiday_name = 'Mothers Day';
+			END
+
+			-- Pride Month (to be added)
+		-- -------------------------------------------------------------
+		-- June 
+		-- --------------------------------------------------------------
+
+
+		-- --------------------------------------------------------------
+		-- July
+		-- --------------------------------------------------------------
+
+
+		-- -------------------------------------------------------------
+		-- August
+		-- --------------------------------------------------------------
+
+		-- -------------------------------------------------------------
+		--September
+		-- -------------------------------------------------------------
+					
+		-- -------------------------------------------------------------
+		-- October
+		-- -------------------------------------------------------------
+			--World Mental Health Day : October 10
+			ELSE IF MONTH(@current_date) = 10 AND DAY(@current_date) =10
+			BEGIN
+					SET @holiday_flag = 1;
+					SET @religious_holiday_flag = 0;
+					SET @holiday_name = 'World Mental Health Day';
+			END
+
+			-- Halloween : October 31
+			ELSE IF MONTH(@current_date) = 10 AND DAY(@current_date) = 31
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag = 0;
+				SET @holiday_name = 'Halloween';
+			END
+		-- --------------------------------------------------------------------
+		-- November
+		-- --------------------------------------------------------------------
+
+			-- Single's Day : November 11
+			ELSE IF MONTH(@current_date) = 11 AND DAY(@current_date) = 11
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag = 0;
+				SET @holiday_name = 'Singles Day';
+			END
+
+			-- International Men's Day
+			ELSE IF MONTH(@current_date) = 11 AND DAY(@current_date) = 19
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag = 0;
+				SET @holiday_name =  'International Mens Day';
+			END
+
+			-- Black Friday (needs to be added)
+		-- ------------------------------------------------------------------
+		-- December
+		-- -------------------------------------------------------------------
+	
+			-- Christmas: December 25
+			ELSE IF MONTH(@current_date) = 12 AND DAY(@current_date) = 25
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag = 1;
+				SET @holiday_name = 'Christmas Day';
+			END
+			-- Boxing Day: December 26 (common in UK, Canada, Australia)
+			ELSE IF MONTH(@current_date) = 12 AND DAY(@current_date) = 26
+			BEGIN
+				SET @holiday_flag = 1;
+				SET @religious_holiday_flag = 0;
+				SET @holiday_name = 'Boxing Day';
+			END
 
 
 -- --------------------------------------------------------------------------------------------
 -- United States
 --**************
 -- Independance day
-
 -- --------------------------------------------------------------------------------------------
         -- Country-specific holidays (example)
         IF @country = 'United States'
