@@ -140,9 +140,12 @@ CREATE TABLE silver.dwh_dim_date
 -- Designed to extend the core Date dimension without duplicating it.
 -- Joined contextually using date_key and customer country.
 
+IF OBJECT_ID('silver.dwh_dim_supplementary_calendar', 'U') IS NOT NULL
+    DROP TABLE silver.dwh_dim_supplementary_calendar
+
 CREATE TABLE silver.dwh_dim_supplementary_calendar(
 date_key INT NOT NULL,
-country CHAR(2) NOT NULL,
+country CHAR(10) NOT NULL,
 holiday_flag BIT NOT NULL,
 religious_holiday_flag BIT NOT NULL,
 holiday_name VARCHAR(100) NULL,
