@@ -218,9 +218,9 @@ These measures enable analysis of revenue, order value, product performance, and
 
 ![Fact_table](docs/fact_table.png)
 
+![Data_Flow](docs/data_flow.png)
 
 
-![Data Flow](docs/DataFlow.png)
 ---
 
 ## 🛠️ Important Links & Tools:
