@@ -317,7 +317,7 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			--=========================================================================================
 
 -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			DECLARE @start_date DATETIME = '12/29/2014' --Starting value of Date Range
+			DECLARE @start_date DATETIME = '01/01/2010' --Starting value of Date Range
 			DECLARE @end_date DATETIME = '01/01/2100' --End Value of Date Range
 -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			PRINT '>> The dwh_dim_date will be populated from ' + CAST(@start_date AS NVARCHAR(30))  + ' to ' + CAST(@end_date AS NVARCHAR(30)) + '.';
