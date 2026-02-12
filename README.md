@@ -275,3 +275,21 @@ Clear, interactive business intelligence for pricing, promotions, and growth str
 # 📂 Repository Structure
 
 
+---
+
+# 🛠️ Tools & Technologies
+
+- SQL Server Express  
+- SQL Server Management Studio (SSMS)  
+- Power BI  
+- Draw.io  
+- Git / GitHub  
+
+---
+
+# 📜 License
+
+This project is licensed under the MIT License.
+
+
+
