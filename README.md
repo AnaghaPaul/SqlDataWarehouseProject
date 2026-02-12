@@ -214,3 +214,4 @@ Enables:
 
 A normalized dimensional version is available under:
 
+![Data Flow](data_warehouse_snowflake/docs/data_model.png)
