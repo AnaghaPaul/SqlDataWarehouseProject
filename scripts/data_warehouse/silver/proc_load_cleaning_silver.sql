@@ -459,6 +459,13 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 					DATEADD(QQ, DATEDIFF(QQ, -1, @current_date), -1) AS 'last_day_of_quarter',
 					CONVERT(DATETIME, '01/01/' + CONVERT(VARCHAR, DATEPART(YY, @current_date))) AS 'first_day_of_year',
 					CONVERT(DATETIME, '12/31/' + CONVERT(VARCHAR, DATEPART(YY, @current_date))) AS 'last_day_of_year',
+					CASE
+					WHEN DATEPART(MM,@current_date) IN (12,1,2) THEN 'Winter'
+					WHEN DATEPART(MM,@current_date) IN (3,4,5) THEN 'Spring'
+					WHEN DATEPART(MM,@current_date) IN (6,7,8) THEN 'Summer'
+					WHEN DATEPART(MM,@current_date) IN (9,10,11) THEN 'Autumn'
+					END AS 'season',
+					NULL AS 'is_holiday',
 					CASE DATEPART(DW, @current_date)
 						WHEN 1 THEN 0
 						WHEN 2 THEN 1
@@ -467,7 +474,8 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 						WHEN 5 THEN 1
 						WHEN 6 THEN 1
 						WHEN 7 THEN 0
-					END AS 'is_weekday'
+					END AS 'is_weekday',
+					NULL AS 'holiday_name'
 
 				SET @current_date = DATEADD(DD, 1, @current_date)
 				END
@@ -496,3 +504,8 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			 PRINT '==============================================='
 		END CATCH			
 	END
+
+	EXEC silver.load_silver
+
+
+	SELECT TOP 5 * FROM silver.dwh_dim_date
