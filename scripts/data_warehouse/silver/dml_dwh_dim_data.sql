@@ -1,3 +1,5 @@
+-- ==============================================================Global Holiday=================================================================================
+
 /*Update HOLIDAY Field of In dimension - only included global holidays*/
 		    /* New Years Day - January 1 */
 		    UPDATE silver.dwh_dim_date
@@ -53,8 +55,8 @@
 		    UPDATE silver.dwh_dim_date
 		        SET is_holiday = CASE WHEN holiday_name IS NULL THEN 0
 		                                WHEN holiday_name IS NOT NULL THEN 1 END
-
-			-- ---------------------------------------------------------------------------------
+				
+-- =======================================================Fiscal Calendar=================================================================================
 						
 			
 			/* Add Fiscal Calendar columns into table DimDate */
