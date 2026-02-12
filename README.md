@@ -215,3 +215,63 @@ Enables:
 A normalized dimensional version is available under:
 
 ![Data Flow](data_warehouse_snowflake/docs/data_model.png)
+
+
+
+This model:
+
+- Separates hierarchical attributes (e.g., category structures)  
+- Reduces redundancy  
+- Handles global hierarchy complexity  
+
+The Star Schema remains the primary analytical model.
+
+---
+
+# 📈 Stage 2 – SQL-Based Data Analysis
+
+The analysis process follows five structured stages:
+
+1. Explore  
+2. Profile  
+3. Clean  
+4. Shape  
+5. Analyze  
+
+---
+
+## SQL Workflow
+
+![Data Analysis Workflow](docs/data_analysis_workflow.png)
+
+---
+
+## Analytical Focus Areas
+
+- Customer behavior analysis  
+- Product performance evaluation  
+- Revenue and growth trends  
+- Time-series and seasonal analysis  
+
+Many data quality improvements are already handled in the ETL layer, ensuring SQL analysis starts from curated datasets.
+
+---
+
+# 📊 Stage 3 – Power BI Visualization
+
+The Gold-layer Star Schema connects directly to Power BI, enabling:
+
+- KPI dashboards  
+- Interactive drill-down reports  
+- Customer segmentation  
+- Regional comparisons  
+- Trend analysis  
+
+**Outcome:**  
+Clear, interactive business intelligence for pricing, promotions, and growth strategy.
+
+---
+
+# 📂 Repository Structure
+
+
