@@ -216,7 +216,7 @@ The central fact table captures sales measures at the declared grain, including:
 These measures enable analysis of revenue, order value, product performance, and sales trends over time.
 
 
-![Fact_table](docs/fact_table_starschema.png)
+![Fact_table](docs/fact_table_star_schema.png)
 
 
 
