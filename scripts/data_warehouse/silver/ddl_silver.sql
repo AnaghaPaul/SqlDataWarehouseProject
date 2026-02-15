@@ -136,4 +136,19 @@ CREATE TABLE silver.dwh_dim_date
 	is_holiday BIT,-- Flag 1=Global Holiday, 0-No Global Holiday
     is_weekday BIT,-- 0=Week End ,1=Week Day
 	holiday_name VARCHAR(50),--Name of Global
+	fiscal_day_of_year VARCHAR(3),
+	fiscal_week_of_year VARCHAR(3),
+	fiscal_month VARCHAR(2),
+	fiscal_quarter CHAR(1),
+	fiscal_quarter_name VARCHAR(9),
+	fiscal_year CHAR(4),
+	fiscal_year_name CHAR(7),
+	fiscal_month_year CHAR(10),
+	fiscal_mmyyyy CHAR(6),
+	fiscal_first_day_of_month DATE,
+	fiscal_last_day_of_month DATE,
+	fiscal_first_day_of_quarter DATE,
+	fiscal_last_day_of_quarter DATE,
+	fiscal_first_day_of_year DATE,
+	fiscal_last_day_of_year DATE,
 );
