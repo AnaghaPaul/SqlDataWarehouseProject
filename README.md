@@ -85,6 +85,31 @@ Customers operate across:
 Supports regional and country-level reporting.
 
 ---
+# Data Warehouse / Business Intelligence System Requirements
+
+1️⃣ The DW/BI System must make information easily accessible
+
+The data’s structures and labels should mimic the business users’ thought processes and vocabulary.
+
+**simple and fast**
+
+2️⃣ The DW/BI system must present information consistently.
+
+Data must be assembled from a variety of sources, cleansed, quality assured, and released only when it is fit for user consumption.
+
+Ensure common labels and definitions for the DW/BI system’s contents are used across data sources.
+
+3️⃣ The DW/BI system must adapt to change.
+
+4️⃣ The DW/BI system must present information in a timely way.
+
+5️⃣ The DW/BI system must be a secure bastion that protects the information assets.
+
+6️⃣ The DW/BI system must serve as the authoritative and trustworthy foundation for improved decision making.
+
+7️⃣ The business community must accept the DW/BI system to deem it successful.
+
+
 
 # 🏗️ Stage 1 – Data Warehouse (Medallion Architecture)
 
@@ -118,6 +143,12 @@ Incremental data quality improvement, simplified maintenance, and scalable analy
 ---
 
 # ⭐ Dimensional Design Process
+
+**Why dimensional Modelling?**
+
+**Deliver data that’s understandable to the business users.**
+
+**Deliver fast query performance.** 
 
 The dimensional model follows Kimball’s structured four-step approach.
 
