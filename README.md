@@ -315,7 +315,7 @@ Views act as a governance boundary between storage and business consumption.
 
 ---
 
-# ❄️ Snowflake Schema (Alternative Model)
+<!--# ❄️ Snowflake Schema (Alternative Model)
 
 A normalized dimensional version is available:
 
@@ -327,7 +327,7 @@ This version:
 - Reduces redundancy  
 - Supports complex global hierarchies  
 
-The Star Schema remains the primary analytical model.
+The Star Schema remains the primary analytical model.-->
 
 ---
 
