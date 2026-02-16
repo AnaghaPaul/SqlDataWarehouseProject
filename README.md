@@ -1,75 +1,28 @@
-# Modern Retail & Order Management Data Warehouse using SQL Server
+# 🏬 Modern Retail & Order Management Data Warehouse  
+**SQL Server | Dimensional Modeling | Medallion Architecture | Power BI**
 
 ---
 
 ## 📌 Project Overview
 
-This project delivers a modern **Retail & Order Management Data Warehouse** for a company selling bicycles, sports clothing, and related components across multiple international markets.
+This project delivers a modern **Retail & Order Management Data Warehouse** supporting a company selling bicycles, sports clothing, and related components across international markets.
 
-The business operates in a retail / e-commerce model, managing:
+The solution integrates CRM and ERP systems into a structured, analytics-ready platform designed for:
 
-- Customer orders  
-- Product catalogs  
-- Pricing and quantities  
-- Fulfillment timelines  
-
-The data warehouse supports:
-
-- Sales performance analysis  
-- Customer behavior and segmentation  
-- Product and category-level reporting  
+- Sales performance reporting  
+- Customer behavior analysis  
+- Product and category insights  
 - Order lifecycle tracking (order, shipping, due dates)  
+- Regional and country-level comparisons  
 
-The primary analytical model is implemented as a **Star Schema** with a role-playing Date dimension.  
-An alternative **Snowflake Schema** version is included separately for hierarchical normalization and global modeling scenarios.
+The warehouse is built using:
 
----
+- **Dimensional Modeling (Star Schema)**
+- **Medallion Architecture (Bronze → Silver → Gold)**
+- **SQL-based transformations**
+- **Power BI integration**
 
-# 🗂️ Data Sources
-
-The warehouse integrates enterprise-style CRM and ERP systems.
-
-## 1️⃣ CRM (Customer Relationship Management)
-
-Provides customer master data:
-
-- Customer identifiers and business keys  
-- Personal attributes (name, gender, marital status)  
-- Customer creation and lifecycle details  
-
-Supports:
-
-- Customer profiling  
-- Segmentation  
-- Retention analysis  
-
----
-
-## 2️⃣ ERP (Enterprise Resource Planning)
-
-Provides operational and transactional data.
-
-### Product Master Data
-- Product name  
-- Cost  
-- Product line  
-- Category and subcategory  
-- Lifecycle dates  
-
-### Sales & Order Transactions
-- Order numbers  
-- Line-level sales data  
-- Order, shipping, and due dates  
-- Sales amounts, quantities, pricing  
-
-### Customer Demographics & Geography
-- Birth date  
-- Gender  
-- Country and location  
-
-Enables full order-to-delivery lifecycle analysis.
-
-![Integration Model](docs/integration_model.png)
+The system balances performance, governance, scalability, and business usability.
 
 ---
 
@@ -84,160 +37,218 @@ Customers operate across:
 - France  
 - Australia  
 
-Supports regional and country-level reporting.
+Supports multi-country and regional reporting.
 
 ---
-# Data Warehouse / Business Intelligence System Requirements
 
-1️⃣ The DW/BI System must make information easily accessible
+# 🗂️ Data Sources
 
-The data’s structures and labels should mimic the business users’ thought processes and vocabulary.
+## 1️⃣ CRM System
 
-**simple and fast**
+Provides customer master data:
 
-2️⃣ The DW/BI system must present information consistently.
+- Customer identifiers  
+- Personal attributes  
+- Customer lifecycle details  
 
-Data must be assembled from a variety of sources, cleansed, quality assured, and released only when it is fit for user consumption.
+Supports:
 
-Ensure common labels and definitions for the DW/BI system’s contents are used across data sources.
+- Customer profiling  
+- Retention analysis  
+- Segmentation modeling  
 
-3️⃣ The DW/BI system must adapt to change.
+---
 
-4️⃣ The DW/BI system must present information in a timely way.
+## 2️⃣ ERP System
 
-5️⃣ The DW/BI system must be a secure bastion that protects the information assets.
+Provides operational and transactional data.
 
-6️⃣ The DW/BI system must serve as the authoritative and trustworthy foundation for improved decision making.
+### Product Master Data
+- Product name  
+- Cost  
+- Product line  
+- Category & subcategory  
+- Lifecycle dates  
 
-7️⃣ The business community must accept the DW/BI system to deem it successful.
+### Sales & Order Transactions
+- Order numbers  
+- Line-level transaction data  
+- Order, shipping, and due dates  
+- Sales amount, quantity, pricing  
 
+### Demographics & Geography
+- Birth date  
+- Gender  
+- Country  
 
+![Integration Model](docs/integration_model.png)
 
-# 🏗️ Stage 1 – Data Warehouse (Medallion Architecture)
+---
 
-The warehouse follows a structured **Bronze → Silver → Gold** architecture.
+# 🚀 Core Data Warehouse Features
 
-## Architecture Diagram
+---
+
+## ⭐ 1. Dimensional Modeling – Star Schema
+
+The analytical layer is implemented using a **Star Schema**, optimized for reporting and BI workloads.
+
+### Structure
+
+- Central fact table: `fact_sales`
+- Conformed dimension tables:
+  - `dim_customer`
+  - `dim_product`
+  - `dim_date` (role-playing: order date, shipping date, due date)
+
+### Declared Grain
+
+> One row represents one product purchased by one customer in a single order (order line item level).
+
+This supports precise revenue tracking and customer-level analysis.
+
+### Business & Technical Benefits
+
+| Benefit | Impact |
+|----------|--------|
+| High Query Performance | Fewer joins and denormalized dimensions |
+| Business Readability | Model aligns with stakeholder reporting needs |
+| BI Tool Compatibility | Seamless Power BI integration |
+| Scalability | New dimensions and metrics can be added easily |
+
+Supports analysis such as:
+
+- Revenue by category and region  
+- Customer purchasing patterns  
+- Seasonal sales trends  
+- Order fulfillment cycle analysis  
+
+![Star Schema Model](docs/data_model_starschema.png)
+
+![Fact Table Structure](docs/fact_table_star_schema.png)
+
+---
+
+## 📊 2. Facts and Dimensions – Analytical Integrity
+
+The design strictly separates measurable events from descriptive attributes.
+
+### 🔹 Fact Table – `fact_sales`
+
+Contains additive measures:
+
+- `sales_amount`
+- `quantity`
+- `unit_price`
+
+**Facts:**
+
+- Participate in aggregations (SUM, AVG)
+- Drive KPIs and executive metrics
+- Enable time-series and trend analysis
+- Represent numeric business events
+
+---
+
+### 🔹 Dimension Tables
+
+Contain descriptive attributes such as:
+
+- Product hierarchy (category, subcategory)
+- Customer demographics
+- Geographic attributes
+- Calendar hierarchies
+
+**Dimensions:**
+
+- Used for filtering and grouping
+- Enable drill-down analysis
+- Define analytical constraints
+- Support segmentation
+
+### Modeling Discipline Applied
+
+- No additive business metrics stored in dimension tables  
+- Clear fact grain declaration  
+- Surrogate key implementation  
+- Controlled handling of non-additive attributes  
+
+Prevents:
+
+- Double counting  
+- Aggregation ambiguity  
+- Reporting inconsistencies  
+
+---
+
+## 🏗️ 3. Medallion Architecture (Bronze → Silver → Gold)
+
+The warehouse follows a structured layered architecture.
 
 ![Data Architecture](docs/data_architecture.png)
 
 ---
 
-## 🔹 Bronze Layer
+### 🔹 Bronze Layer – Raw Ingestion
+
 - Raw CSV ingestion from CRM and ERP  
 - No transformations  
-- Preserves source fidelity and traceability  
+- Full source traceability  
 
-## 🔹 Silver Layer
-- Data cleansing  
-- Standardization  
+**Benefit:** Preserves auditability and lineage.
+
+---
+
+### 🔹 Silver Layer – Cleansed & Conformed
+
+- Data standardization  
 - Deduplication  
+- Data type normalization  
 - Conformed reference data (including unified date dimension)  
 
-## 🔹 Gold Layer
-- Business-ready star schema  
-- Fact and conformed dimension tables  
-- Optimized for analytical queries and Power BI  
-
-**Benefit:**  
-Incremental data quality improvement, simplified maintenance, and scalable analytics.
+**Benefit:** Ensures consistent business definitions across systems.
 
 ---
 
-# ⭐ Dimensional Design Process
+### 🔹 Gold Layer – Business-Ready Model
 
-**Why dimensional Modelling?**
+- Star schema implementation  
+- Optimized fact and dimension tables  
+- Designed for analytical performance  
 
-**Deliver data that’s understandable to the business users.**
+**Benefits:**
 
-**Deliver fast query performance.** 
-
-The dimensional model follows Kimball’s structured four-step approach.
-
----
-
-## 1️⃣ Select Business Process
-
-Retail sales and order management — covering:
-
-- Order placement  
-- Fulfillment  
-- Delivery timelines  
+- Clear separation between transformation and reporting logic  
+- Scalable data design  
+- Stable semantic layer for BI tools  
 
 ---
 
-## 2️⃣ Declare Grain
+## 🔐 4. Gold Layer Views – Security & Access Management
 
-**Fact Table Grain:**
+The Gold layer exposes **SQL views** rather than direct table access.
 
-> One row represents one product purchased by one customer within a single sales order (order line item level).
+### Purpose
 
-This supports:
+- Restrict direct access to base tables  
+- Enforce role-based security  
+- Mask sensitive columns  
+- Provide abstraction from physical schema  
 
-- Product-level analysis  
-- Customer purchasing behavior  
-- Transaction-level revenue tracking  
+### Governance Benefits
 
----
+| Feature | Benefit |
+|----------|---------|
+| Role-based access | Controlled exposure of data |
+| Column-level filtering | Protection of sensitive attributes |
+| Schema abstraction | Safe structural evolution |
+| Stable BI interface | Prevents dashboard disruption |
 
-## 3️⃣ Identify Dimensions
-
-### 🟢 Product Dimension
-Derived from ERP:
-
-- Product name  
-- Product line  
-- Category & subcategory  
-- Lifecycle dates  
-
-### 🟢 Customer Dimension
-Derived from CRM & ERP:
-
-- Customer identifiers  
-- Demographics  
-- Country  
-
-### 🟢 Date Dimension (Role-Playing)
-
-A single conformed `dim_date` reused as:
-
-- Order Date  
-- Shipping Date  
-- Due Date  
-
-Ensures consistent time intelligence without duplication.
+Views act as a governance boundary between storage and business consumption.
 
 ---
 
-## 4️⃣ Identify Facts
-
-The central `fact_sales` table includes:
-
-- Sales amount  
-- Quantity sold  
-- Unit price  
-
-Enables:
-
-- Revenue analysis  
-- Product performance  
-- Sales trends over time  
-
----
-
-## 📊 Star Schema Model
-
-![Data Model](docs/data_model_starschema.png)
-
----
-
-## 📋 Fact Table Structure
-
-![Fact Table](docs/fact_table_star_schema.png)
-
----
-
-## 🔄 Data Flow
+# 🔄 Data Flow
 
 ![Data Flow](docs/data_flow.png)
 
@@ -245,25 +256,23 @@ Enables:
 
 # ❄️ Snowflake Schema (Alternative Model)
 
-A normalized dimensional version is available under:
+A normalized dimensional version is available:
 
-![Data Flow](data_warehouse_snowflake/docs/data_model.png)
+![Snowflake Model](data_warehouse_snowflake/docs/data_model.png)
 
+This version:
 
-
-This model:
-
-- Separates hierarchical attributes (e.g., category structures)  
+- Separates hierarchical attributes  
 - Reduces redundancy  
-- Handles global hierarchy complexity  
+- Supports complex global hierarchies  
 
 The Star Schema remains the primary analytical model.
 
 ---
 
-# 📈 Stage 2 – SQL-Based Data Analysis
+# 📈 SQL-Based Data Analysis
 
-The analysis process follows five structured stages:
+The analysis workflow follows:
 
 1. Explore  
 2. Profile  
@@ -271,26 +280,18 @@ The analysis process follows five structured stages:
 4. Shape  
 5. Analyze  
 
----
-
-## SQL Workflow
-
 ![Data Analysis Workflow](docs/data_analysis_workflow.png)
 
----
-
-## Analytical Focus Areas
+Focus areas:
 
 - Customer behavior analysis  
 - Product performance evaluation  
 - Revenue and growth trends  
 - Time-series and seasonal analysis  
 
-Many data quality improvements are already handled in the ETL layer, ensuring SQL analysis starts from curated datasets.
-
 ---
 
-# 📊 Stage 3 – Power BI Visualization
+# 📊 Power BI Integration
 
 The Gold-layer Star Schema connects directly to Power BI, enabling:
 
@@ -298,15 +299,13 @@ The Gold-layer Star Schema connects directly to Power BI, enabling:
 - Interactive drill-down reports  
 - Customer segmentation  
 - Regional comparisons  
-- Trend analysis  
+- Trend visualization  
 
-**Outcome:**  
-Clear, interactive business intelligence for pricing, promotions, and growth strategy.
+**Outcome:** Decision-ready intelligence for pricing, promotions, and growth strategy.
 
 ---
 
 # 📂 Repository Structure
-
 
 ---
 
@@ -320,9 +319,23 @@ Clear, interactive business intelligence for pricing, promotions, and growth str
 
 ---
 
+# 🎯 What This Project Demonstrates
+
+- Dimensional modeling expertise  
+- Fact/dimension integrity enforcement  
+- Enterprise-style layered architecture  
+- Governance-aware warehouse design  
+- BI-ready semantic modeling  
+- Business-aligned analytical thinking  
+
+This solution delivers a secure, scalable, and performance-optimized analytical foundation.
+
+---
+
 # 📜 License
 
 This project is licensed under the MIT License.
+
 
 
 
