@@ -163,11 +163,13 @@ Supports analysis such as:
 - Revenue by category and region  
 - Customer purchasing patterns  
 - Seasonal sales trends  
-- Order fulfillment cycle analysis  
+- Order fulfillment cycle analysis
+
+![Fact Table Structure](docs/fact_table_star_schema.png)
 
 ![Star Schema Model](docs/data_model_starschema.png)
 
-![Fact Table Structure](docs/fact_table_star_schema.png)
+
 
 ---
 
