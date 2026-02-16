@@ -43,43 +43,85 @@ Supports multi-country reporting.
 
 # 🗂️ Data Sources
 
-## 1️⃣ CRM System
 
-Provides customer master data:
-
-- Customer identifiers  
-- Personal attributes  
-- Customer lifecycle details  
-
-Supports:
-
-- Customer profiling  
-- Retention analysis  
-- Segmentation modeling  
+The data warehouse consolidates operational data from two enterprise systems: **CRM** and **ERP**.  
+Each system contributes distinct business capabilities that are integrated and conformed in the warehouse.
 
 ---
 
-## 2️⃣ ERP System
+## 1️⃣ Customer Relationship Management (CRM)
 
-Provides operational and transactional data.
+The CRM system is the primary source of **customer master data and transactional references**.
 
-### Product Master Data
-- Product name  
-- Cost  
-- Product line  
-- Category & subcategory  
-- Lifecycle dates  
+### Core Contributions
 
-### Sales & Order Transactions
-- Order numbers  
-- Line-level transaction data  
-- Order, shipping, and due dates  
-- Sales amount, quantity, pricing  
+#### 🔹 Customer Master Data
+- Customer identifiers (business keys)
+- Customer creation details
+- Core personal attributes
 
-### Demographics & Geography
-- Birth date  
-- Gender  
-- Country  
+**Purpose in the DW:**
+- Forms the base of the `dim_customer`
+- Establishes consistent customer grain
+- Supports customer lifecycle tracking
+
+---
+
+#### 🔹 Sales Transaction References
+- Customer-product relationships
+- Order-level transactional identifiers
+
+**Purpose in the DW:**
+- Contributes to `fact_sales`
+- Defines the transactional grain (order line level)
+- Enables revenue attribution to customers and products
+
+---
+
+#### 🔹 Product Reference Data
+- Product identifiers
+- Current and historical product attributes
+
+**Purpose in the DW:**
+- Contributes to `dim_product`
+- Maintains product integrity across transactions
+
+---
+
+## 2️⃣ Enterprise Resource Planning (ERP)
+
+The ERP system enriches CRM data with **operational, demographic, and hierarchical business context**.
+
+### Core Contributions
+
+#### 🔹 Customer Demographics
+- Birth date
+- Additional customer attributes
+
+**Purpose in the DW:**
+- Enhances `dim_customer`
+- Enables age-based segmentation and behavioral analysis
+
+---
+
+#### 🔹 Geographic Information
+- Country and location attributes
+
+**Purpose in the DW:**
+- Enables regional and country-level reporting
+- Supports geographic performance comparison
+
+---
+
+#### 🔹 Product Hierarchy
+- Product line
+- Category and subcategory structures
+
+**Purpose in the DW:**
+- Enhances `dim_product`
+- Enables category roll-ups and hierarchical analysis
+
+---
 
 ![Integration Model](docs/integration_model.png)
 
