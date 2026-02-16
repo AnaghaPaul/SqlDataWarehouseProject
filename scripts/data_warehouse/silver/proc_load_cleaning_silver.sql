@@ -475,10 +475,81 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 						WHEN 6 THEN 1
 						WHEN 7 THEN 0
 					END AS 'is_weekday',
-					NULL AS 'holiday_name'
+					NULL AS 'holiday_name',
+					NULL AS 'fiscal_day_of_year',
+					NULL AS 'fiscal_week_of_year',
+					NULL AS 'fiscal_month',
+					NULL AS 'fiscal_quarter',
+					NULL AS 'fiscal_quarter_name',
+					NULL AS 'fiscal_year',
+					NULL AS 'fiscal_year_name',
+					NULL AS 'fiscal_month_year',
+					NULL AS 'fiscal_mmyyyy',
+					NULL AS 'fiscal_first_day_of_month',
+					NULL AS 'fiscal_last_day_of_month',
+					NULL AS 'fiscal_first_day_of_quarter',
+					NULL AS 'fiscal_last_day_of_quarter',
+					NULL AS 'fiscal_first_day_of_year',
+					NULL AS 'fiscal_last_day_of_year'
 
 				SET @current_date = DATEADD(DD, 1, @current_date)
 				END
+
+				/*Update HOLIDAY Field of In dimension - only included global holidays*/
+		    /* New Years Day - January 1 */
+		    UPDATE silver.dwh_dim_date
+		        SET [holiday_name] = 'New Year''s Day'
+		    WHERE [month] = 1 AND [day_of_month] = 1
+		
+		    /* Valentine's Day - February 14 */
+		    UPDATE silver.dwh_dim_date
+		        SET [holiday_name] = 'Valentine''s Day'
+		    WHERE
+		        [month] = 2 AND
+		        [day_of_month] = 14
+		
+		    /* Mother's Day - Second Sunday of May */
+		    UPDATE silver.dwh_dim_date
+		        SET [holiday_name] = 'Mother''s Day'
+		    WHERE
+		        [month] = 5 AND
+		        [day_of_week] = 'Sunday' AND
+		        [day_of_week_in_month] = 2
+		
+		    /* Father's Day - Third Sunday of June */
+		    UPDATE silver.dwh_dim_date
+		        SET [holiday_name] = 'Father''s Day'
+		    WHERE
+		        [month] = 6 AND
+		        [day_of_week] = 'Sunday' AND
+		        [day_of_week_in_month] = 3
+		
+		    /* Halloween - 10/31 */
+		    UPDATE silver.dwh_dim_date
+		        SET [holiday_name] = 'Halloween'
+		    WHERE
+		        [month] = 10 AND
+		        [day_of_month] = 31
+		    
+		    /* Thanksgiving - Fourth THURSDAY in November */
+		    UPDATE silver.dwh_dim_date
+		        SET [holiday_name] = 'Thanksgiving Day'
+		    WHERE
+		        [month] = 11 AND
+		        [day_of_week] = 'Thursday' AND
+		        [day_of_week_in_month] = 4
+		
+		    /* Christmas */
+		    UPDATE silver.dwh_dim_date
+		        SET [holiday_name] = 'Christmas Day'
+		    WHERE [month] = 12 AND
+		          [day_of_month]  = 25
+		    
+		    
+		    --set flag for holidays in Dimension
+		    UPDATE silver.dwh_dim_date
+		        SET is_holiday = CASE WHEN holiday_name IS NULL THEN 0
+		                                WHEN holiday_name IS NOT NULL THEN 1 END
 
 	
 			SET @end_load_time = GETDATE();
