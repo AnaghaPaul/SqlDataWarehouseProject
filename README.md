@@ -37,7 +37,7 @@ Customers operate across:
 - France  
 - Australia  
 
-Supports multi-country and regional reporting.
+Supports multi-country reporting.
 
 ---
 
