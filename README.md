@@ -69,6 +69,8 @@ Provides operational and transactional data.
 
 Enables full order-to-delivery lifecycle analysis.
 
+![Integration Model](docs/integration_model.png)
+
 ---
 
 # 🌍 Geographic Coverage
