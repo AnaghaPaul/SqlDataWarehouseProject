@@ -494,7 +494,7 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 
 				SET @current_date = DATEADD(DD, 1, @current_date)
 				END
-
+-- ==============================================================Global Holiday=================================================================================
 				/*Update HOLIDAY Field of In dimension - only included global holidays*/
 		    /* New Years Day - January 1 */
 		    UPDATE silver.dwh_dim_date
