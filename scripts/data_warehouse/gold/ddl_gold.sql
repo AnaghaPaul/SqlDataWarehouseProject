@@ -134,7 +134,25 @@ GO
     last_day_of_quarter AS order_last_day_of_quarter,
     first_day_of_year AS order_first_day_of_year,
     last_day_of_year AS order_last_day_of_year,
-    is_weekday AS order_is_weekday-- 0=Week End ,1=Week Day
+	season AS order_season,
+	is_holiday AS order_is_holiday,
+    is_weekday AS order_is_weekday,-- 0=Week End ,1=Week Day
+	holiday_name AS order_holiday_name,
+	fiscal_day_of_year AS order_fiscal_day_of_year,
+	fiscal_week_of_year AS order_fiscal_week_of_year,
+	fiscal_month AS order_fiscal_month,
+	fiscal_quarter AS order_fiscal_quarter,
+	fiscal_quarter_name AS order_fiscal_quarter_name,
+	fiscal_year AS order_fiscal_year,
+	fiscal_year_name AS order_fiscal_year_name,
+	fiscal_month_year AS order_fiscal_month_year,
+	fiscal_mmyyyy AS order_fiscal_mmyyyy,
+	fiscal_first_day_of_month AS order_fiscal_first_day_of_month,
+	fiscal_last_day_of_month AS order_fiscal_last_day_of_month,
+	fiscal_first_day_of_quarter AS order_fiscal_first_day_of_quarter,
+	fiscal_last_day_of_quarter AS order_fiscal_last_day_of_quarter,
+	fiscal_first_day_of_year AS order_fiscal_first_day_of_year,
+	fiscal_last_day_of_year AS order_fiscal_last_day_of_year
 	
   FROM silver.dwh_dim_date
 
@@ -175,7 +193,25 @@ GO
     last_day_of_quarter AS shipping_last_day_of_quarter,
     first_day_of_year AS shipping_first_day_of_year,
     last_day_of_year AS shipping_last_day_of_year,
-    is_weekday AS shipping_is_weekday-- 0=Week End ,1=Week Day
+    season AS shipping_season,
+	is_holiday AS shipping_is_holiday,
+    is_weekday AS shipping_is_weekday,-- 0=Week End ,1=Week Day
+	holiday_name AS shipping_holiday_name,
+	fiscal_day_of_year AS shipping_fiscal_day_of_year,
+	fiscal_week_of_year AS shipping_fiscal_week_of_year,
+	fiscal_month AS shipping_fiscal_month,
+	fiscal_quarter AS shipping_fiscal_quarter,
+	fiscal_quarter_name AS shipping_fiscal_quarter_name,
+	fiscal_year AS shipping_fiscal_year,
+	fiscal_year_name AS shipping_fiscal_year_name,
+	fiscal_month_year AS shipping_fiscal_month_year,
+	fiscal_mmyyyy AS shipping_fiscal_mmyyyy,
+	fiscal_first_day_of_month AS shipping_fiscal_first_day_of_month,
+	fiscal_last_day_of_month AS shipping_fiscal_last_day_of_month,
+	fiscal_first_day_of_quarter AS shipping_fiscal_first_day_of_quarter,
+	fiscal_last_day_of_quarter AS shipping_fiscal_last_day_of_quarter,
+	fiscal_first_day_of_year AS shipping_fiscal_first_day_of_year,
+	fiscal_last_day_of_year AS shipping_fiscal_last_day_of_year
 	
   FROM silver.dwh_dim_date
 -- ---------------------------------------------------------------------------------------------------------------------------------
@@ -215,6 +251,24 @@ GO
     last_day_of_quarter AS due_last_day_of_quarter,
     first_day_of_year AS due_first_day_of_year,
     last_day_of_year AS due_last_day_of_year,
-    is_weekday AS due_is_weekday-- 0=Week End ,1=Week Day
+    season AS due_season,
+	is_holiday AS due_is_holiday,
+    is_weekday AS due_is_weekday,-- 0=Week End ,1=Week Day
+	holiday_name AS due_holiday_name,
+	fiscal_day_of_year AS due_fiscal_day_of_year,
+	fiscal_week_of_year AS due_fiscal_week_of_year,
+	fiscal_month AS due_fiscal_month,
+	fiscal_quarter AS due_fiscal_quarter,
+	fiscal_quarter_name AS due_fiscal_quarter_name,
+	fiscal_year AS due_fiscal_year,
+	fiscal_year_name AS due_fiscal_year_name,
+	fiscal_month_year AS due_fiscal_month_year,
+	fiscal_mmyyyy AS due_fiscal_mmyyyy,
+	fiscal_first_day_of_month AS due_fiscal_first_day_of_month,
+	fiscal_last_day_of_month AS due_fiscal_last_day_of_month,
+	fiscal_first_day_of_quarter AS due_fiscal_first_day_of_quarter,
+	fiscal_last_day_of_quarter AS due_fiscal_last_day_of_quarter,
+	fiscal_first_day_of_year AS due_fiscal_first_day_of_year,
+	fiscal_last_day_of_year AS due_fiscal_last_day_of_year
 	
   FROM silver.dwh_dim_date
