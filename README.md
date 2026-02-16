@@ -179,18 +179,35 @@ The design strictly separates measurable events from descriptive attributes.
 
 ### 🔹 Fact Table – `fact_sales`
 
-Contains additive measures:
+Contains measures:
 
-- `sales_amount`
-- `quantity`
-- `unit_price`
+- `sales_amount` (fully additive)
+- `quantity` (fully additive)
+- `unit_price` (non-additive snapshot attribute)
+
+**Measure Behavior:**
+
+- `sales_amount` → Fully additive across all dimensions  
+- `quantity` → Fully additive across all dimensions  
+- `unit_price` → Non-additive (cannot be summed meaningfully)
+
+`unit_price` is stored at the order-line grain to preserve historical pricing at the time of transaction.  
+It is used for:
+
+- Margin calculations  
+- Average selling price (AVG) analysis  
+- Price trend analysis over time  
+
+It is **not** intended to be aggregated using SUM, as summing prices produces invalid business meaning.
+
+---
 
 **Facts:**
 
-- Participate in aggregations (SUM, AVG)
-- Drive KPIs and executive metrics
-- Enable time-series and trend analysis
-- Represent numeric business events
+- Drive KPIs and revenue metrics  
+- Support aggregation of additive measures  
+- Enable time-series and performance analysis  
+- Represent measurable business events at defined grain  
 
 ---
 
