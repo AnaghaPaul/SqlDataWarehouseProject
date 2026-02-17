@@ -1,20 +1,21 @@
--- =====================================================================================================================================
--- >> Profile 
--- -------------------------------------------------------------------------------------------------------------------------------------
--- Identifying the domain the data or business falls in
--- >>The business is Ecommerce business model.
+-- ==============================================================================================================================================================================================================
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Profile>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- Checking data quality
--- -------------------------------------------------------------------------------------------------------------------------------------
--- >>> Profile  ---- Detecting Duplicates
+-- ==============================================================================================================================================================================================================
+-- STEP 1
+-- Detecting Duplicates
+-- Expected Result : 0
+-- ______________________________________________________________________________________________________________________________________________________________________________________________________________
+-- >> Fact Table
 SELECT COUNT(*)
 FROM
 (SELECT 
 	order_number,
 	product_key,
 	customer_key,
-	order_date,
-	shipping_date,
-	due_date,
+	order_date_key,
+	shipping_date_key,
+	due_date_key,
 	sales_amount,
 	quantity,
 	price,
@@ -24,57 +25,68 @@ GROUP BY
 	order_number,
 	product_key,
 	customer_key,
-	order_date,
-	shipping_date,
-	due_date,
+	order_date_key,
+	shipping_date_key,
+	due_date_key,
 	sales_amount,
 	quantity,
 	price
 )a
 WHERE records > 1;
+-- **************************************************************************************************************************************************************************************************************
 --  RESULT :
 -- 0
+-- The Fact table data does not have any duplicates.
+-- **************************************************************************************************************************************************************************************************************
 
--- The Data does not have any duplicates.
--- ====================================================================================================================================
--- Profile -- Null values
+
+-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- STEP 2
+-- Checking Null values
+-- -- Expected total_rows value for each field
+-- ______________________________________________________________________________________________________________________________________________________________________________________________________________
  SELECT
         COUNT(*) AS total_rows,
 		COUNT(order_number) AS order_number_filled,
 		COUNT(product_key) AS product_key_filled,
 		COUNT(customer_key) AS customer_key_filled,
-        COUNT(order_date) AS order_date_filled,
-        COUNT(shipping_date) AS shipping_date_filled,
-        COUNT(due_date) AS due_date_filled,
+        COUNT(order_date_key) AS order_date_key_filled,
+        COUNT(shipping_date_key) AS shipping_date_key_filled,
+        COUNT(due_date_key) AS due_date_key_filled,
         COUNT(sales_amount) AS sales_amount_filled,
         COUNT(quantity) AS quantity_filled,
         COUNT(price) AS price_filled
     FROM gold.fact_sales
 
+	 
+-- ****************************************************************************************************************************************************************************************************************
 /*RESULT :
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-total_rows	order_number_filled	product_key_filled	customer_key_filled	order_date_filled	shipping_date_filled	due_date_filled	sales_amount_filled	quantity_filled	price_filled
-60398		60398				60398				60398				60379				 60398					 60398			60398				60398			60398
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Expected total_rows value for each field
+total_rows	order_number_filled	product_key_filled	customer_key_filled		order_date_key_filled	shipping_date_key_filled	due_date_key_filled		sales_amount_filled		quantity_filled		price_filled
+60398		60398				60398				60398					60379				 	60398						 60398					60398					60398				60398
+-- ****************************************************************************************************************************************************************************************************************
 */
--->> Mising values in order date--19 values
-/*The order dates were set to NULL intentionally because the source values are invalid. 
-Updating them in ETL would require guessing a value, which would introduce assumptions and mask the fact that the original data was invalid. 
-This could mislead analysts, as they would have no visibility into the underlying data quality issue.
-At this stage, the rows should remain NULL to explicitly indicate invalid data.
-Any decision to correct or derive values should only be made after consulting with domain experts and,
-if required in the future, handled explicitly in ETL or stored as a separate derived field.
-Besides the shipping_date is available - In our business model,  the sales month is defined as the shipping month (the date the product leaves the warehouse and ownership transfers to the buyer). */
--- ======================================================================================================================================
--- Profile - Distributions
+-- Explanation and Insight
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Invalid order dates found in source system data!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-- >> Mising values in order date -- 19 values
+-- The order dates were set to NULL intentionally because the source values are invalid. 
+-- Updating them in ETL would require guessing a value, which would introduce assumptions and mask the fact that the original data was invalid. 
+-- This could mislead analysts, as they would have no visibility into the underlying data quality issue.
+-- At this stage, the rows should remain NULL to explicitly indicate invalid data.
+-- Any decision to correct or derive values should only be made after consulting with domain experts and,
+-- if required in the future, handled explicitly in ETL or stored as a separate derived field.
+-- Besides the shipping_date is available - In our business model,  the sales month is defined as the shipping month (the date the product leaves the warehouse and ownership transfers to the buyer). */
+-- ================================================================================================================================================================================================================
+
+-- Step 3	 
+-- Visualizing Distributions
 -- Checking Distributions or frequency checks
 -->> Objective
 -- allows to understand the range of values that exist in the data
 -- how often they occur
 -- whether there are nulls
 -- whether negative values exist alongside positive ones
--- --------------------------------------------------------------------------------------------------------------------------------------
--- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>- gold.fact_sales ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- ______________________________________________________________________________________________________________________________________________________________________________________________________________
 -- order_number
 SELECT order_number,
 	 COUNT(*) AS frequency
@@ -91,8 +103,9 @@ SO62535			3
 SO64083			3
 SO65048			2
 */
--- Insight >> Order_number is not a unique field, multiple products bought in single order is represented as multiple records.
--- 		   >> This is the reason for the duplicates in the field.
+-- Insight >> Order_number is not a unique field, multiple products bought in single order is represented as multiple records. 
+-- Grain of fact_table : One row represents one product purchased by one customer in a single order (order line item level).
+-- This is the reason for the duplicates in the field. The result is expected.
 -- ----------------------------------------------------------------------------------------------------------------------------------------
 -- product_key (Frequency Distribution)
 SELECT
