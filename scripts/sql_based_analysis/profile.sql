@@ -290,14 +290,14 @@ WHERE TABLE_NAME = N'fact_sales'
 -- ---------------------------------------------------------------------------------------------------------------------------------------
 COLUMN_NAME			DATA_TYPE	MAX_LENGTH
 order_number		nvarchar	50
-product_key			bigint	NULL
-customer_key		bigint	NULL
-order_date_key		int	NULL
-shipping_date_key	int	NULL
-due_date_key		int	NULL
-sales_amount		int	NULL
-quantity			int	NULL
-price				int	NULL
+product_key			bigint		NULL
+customer_key		bigint		NULL
+order_date_key		int			NULL
+shipping_date_key	int			NULL
+due_date_key		int			NULL
+sales_amount		int			NULL
+quantity			int			NULL
+price				int			NULL
 */
 -- ----------------------------------------------------------------------------------------------------------------------------------
 -- Quering number of records in each views
