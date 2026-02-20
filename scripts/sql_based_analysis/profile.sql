@@ -606,7 +606,9 @@ total_rows	product_key_filled	product_id_filled	product_number_filled	product_na
 SELECT * 
 FROM gold.dim_products
 WHERE category IS NULL OR subcategory IS NULL OR maintenance IS NULL;
-/*INSIGHT
+/*
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Data Cleaning Suggestion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+INSIGHT
 All the nulls values in the category, subcategory and maintenance fields are of same records.
 The products in all these rows are some kind of pedals, which can be classified as components.
 The null values here can be corrected in ETL process after discussing with subject matter experts.
