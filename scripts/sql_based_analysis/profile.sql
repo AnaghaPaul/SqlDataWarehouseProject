@@ -288,55 +288,16 @@ WHERE TABLE_NAME = N'fact_sales'
 -- ======================================================================================================================================
 -- Result:
 -- ---------------------------------------------------------------------------------------------------------------------------------------
-COLUMN_NAME									DATA_TYPE	MAX_LENGTH
-shipping_date_key							int			NULL
-shipping_date								datetime	NULL
-shipping_full_date							char		10
-shipping_day_of_month						varchar		2
-shipping_day_suffix							varchar		4
-shipping_day_name							varchar		9
-shipping_day_of_week						char		1
-shipping_day_of_week_in_month				varchar		2
-shipping_day_of_week_in_year				varchar		2
-shipping_day_of_quarter						varchar		3
-shipping_day_of_year						varchar		3
-shipping_week_of_month						varchar		1
-shipping_week_of_quarter					varchar		2
-shipping_week_of_year						varchar		2
-shipping_month								varchar		2
-shipping_month_name							varchar		9
-shipping_month_of_quarter					varchar		2
-shipping_quarter							char		1
-shipping_quarter_name						varchar		9
-shipping_year								char		4
-shipping_year_name							char		7
-shipping_month_year							char		10
-shipping_mmyyyy								char		6
-shipping_first_day_of_month					date		NULL
-shipping_last_day_of_month					date		NULL
-shipping_first_day_of_quarter				date		NULL
-shipping_last_day_of_quarter				date		NULL
-shipping_first_day_of_year					date		NULL
-shipping_last_day_of_year					date		NULL
-shipping_season								char		15
-shipping_is_holiday							bit			NULL
-shipping_is_weekday							bit			NULL
-shipping_holiday_name						varchar		50
-shipping_fiscal_day_of_year					varchar		3
-shipping_fiscal_week_of_year				varchar		3
-shipping_fiscal_month						varchar		2
-shipping_fiscal_quarter						char		1
-shipping_fiscal_quarter_name				varchar		9
-shipping_fiscal_year						char		4
-shipping_fiscal_year_name					char		7
-shipping_fiscal_month_year					char		10
-shipping_fiscal_mmyyyy						char		6
-shipping_fiscal_first_day_of_month			date		NULL
-shipping_fiscal_last_day_of_month			date		NULL
-shipping_fiscal_first_day_of_quarter		date		NULL
-shipping_fiscal_last_day_of_quarter			date		NULL
-shipping_fiscal_first_day_of_year			date		NULL
-shipping_fiscal_last_day_of_year			date		NULL
+COLUMN_NAME			DATA_TYPE	MAX_LENGTH
+order_number		nvarchar	50
+product_key			bigint	NULL
+customer_key		bigint	NULL
+order_date_key		int	NULL
+shipping_date_key	int	NULL
+due_date_key		int	NULL
+sales_amount		int	NULL
+quantity			int	NULL
+price				int	NULL
 */
 -- ----------------------------------------------------------------------------------------------------------------------------------
 -- Quering number of records in each views
