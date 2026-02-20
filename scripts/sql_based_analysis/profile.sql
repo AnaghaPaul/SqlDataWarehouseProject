@@ -538,6 +538,72 @@ ntile	lower_bound	upper_bound	orders
 */
 -- =========================================================================================================================================================================================================================
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>dim_products>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Step 1 : Detecting Duplicates
+SELECT COUNT(*)
+FROM
+(
+SELECT
+product_key,
+product_id,
+product_number,
+product_name,
+category_id,
+category,
+subcategory,
+maintenance,
+cost,
+product_line,
+start_date,
+COUNT(*) AS records
+FROM gold.dim_products
+GROUP BY
+product_key,
+product_id,
+product_number,
+product_name,
+category_id,
+category,
+subcategory,
+maintenance,
+cost,
+product_line,
+start_date
+)a
+WHERE records >1;
+
+-- **************************************************************************************************************************************************************************************************************
+--  RESULT :
+-- 0
+-- The Product Dimension table data does not have any duplicates.
+-- **************************************************************************************************************************************************************************************************************
+-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- STEP 2
+-- Checking Null values
+-- -- Expected total_rows value for each field
+-- ______________________________________________________________________________________________________________________________________________________________________________________________________________
+ SELECT
+        COUNT(*) AS total_rows,
+		COUNT(product_key) AS product_key_filled,
+		COUNT(product_id) AS product_id_filled,
+		COUNT(product_number) AS product_number_filled,
+        COUNT(product_name) AS product_name_filled,
+        COUNT(category_id) AS category_id_filled,
+        COUNT(category) AS category_filled,
+        COUNT(subcategory) AS subcategory_filled,
+        COUNT(maintenance) AS maintenance_filled,
+        COUNT(cost) AS cost_filled,
+		COUNT(product_line) AS product_line_filled,
+		COUNT(start_date) AS start_date_filled
+		FROM gold.dim_products
+
+	 
+-- ****************************************************************************************************************************************************************************************************************
+/*RESULT :
+-- Expected total_rows value for each field
+total_rows	order_number_filled	product_key_filled	customer_key_filled		order_date_key_filled	shipping_date_key_filled	due_date_key_filled		sales_amount_filled		quantity_filled		price_filled
+total_rows	product_key_filled	product_id_filled	product_number_filled	product_name_filled		category_id_filled	category_filled	subcategory_filled	maintenance_filled	cost_filled		product_line_filled	start_date_filled
+295			295					295					295						295						295					288				288					288					295				295					295*/
+-- ****************************************************************************************************************************************************************************************************************
 --category (Frequency Distribution)
 SELECT
 	category,
