@@ -123,7 +123,7 @@ The ERP system enriches CRM data with **operational, demographic, and hierarchic
 
 ---
 
-![Integration Model](docs/integration_model.png)
+![Integration Model](docs/data_warehouse_docs/integration_model.png)
 
 ---
 
@@ -165,9 +165,9 @@ Supports analysis such as:
 - Seasonal sales trends  
 - Order fulfillment cycle analysis
 
-![Fact Table Structure](docs/fact_table_star_schema.png)
+![Fact Table Structure](docs/data_warehouse_docs/fact_table_star_schema.png)
 
-![Star Schema Model](docs/data_model_starschema.png)
+![Star Schema Model](docs/data_warehouse_docs/data_model_starschema.png)
 
 
 
@@ -246,7 +246,7 @@ Prevents:
 
 The warehouse follows a structured layered architecture.
 
-![Data Architecture](docs/data_architecture.png)
+![Data Architecture](docs/data_warehouse_docs/data_architecture.png)
 
 ---
 
@@ -311,7 +311,7 @@ Views act as a governance boundary between storage and business consumption.
 
 # 🔄 Data Flow
 
-![Data Flow](docs/data_flow.png)
+![Data Flow](docs/data_warehouse_docs/data_flow.png)
 
 ---
 
