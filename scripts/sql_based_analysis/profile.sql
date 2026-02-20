@@ -301,17 +301,45 @@ shipping_fiscal_last_day_of_year			date		NULL
 */
 -- ----------------------------------------------------------------------------------------------------------------------------------
 -- Quering number of records in each views
-SELECT COUNT(*) AS records
+SELECT
+'Customer Dimension' AS 'table_name',
+COUNT(*) AS records
 FROM gold.dim_customers
 
 UNION ALL
 
-SELECT COUNT(*) AS records
+SELECT 
+'Product Dimension' AS 'table_name',
+COUNT(*) AS records
 FROM gold.dim_products
 
 UNION ALL
 
-SELECT COUNT(*) AS records
+SELECT 
+'Order Date Dimension' AS 'table_name',
+COUNT(*) AS records
+FROM gold.dim_order_date
+
+UNION ALL
+
+SELECT 
+'Due Date Dimension' AS 'table_name',
+COUNT(*) AS records
+FROM gold.dim_due_date
+
+UNION ALL
+
+SELECT 
+'Shipping Date Dimension' AS 'table_name',
+COUNT(*) AS records
+FROM gold.dim_shipping_date
+
+UNION ALL
+
+
+SELECT 
+'Sales Fact' AS 'table_name',
+COUNT(*) AS records
 FROM gold.fact_sales
 
 */
@@ -319,10 +347,13 @@ FROM gold.fact_sales
 -- Result:
 -- -----------------------------------------------------------------------------------------------------------------------------------
 /*
-records
-18484
-295
-60398
+table_name				records
+Customer Dimension		18484
+Product Dimension		295
+Order Date Dimension	32510
+Due Date Dimension		32510
+Shipping Date Dimension	32510
+Sales Fact				60398
 */
 
 
