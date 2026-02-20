@@ -603,6 +603,14 @@ WHERE records >1;
 total_rows	order_number_filled	product_key_filled	customer_key_filled		order_date_key_filled	shipping_date_key_filled	due_date_key_filled		sales_amount_filled		quantity_filled		price_filled
 total_rows	product_key_filled	product_id_filled	product_number_filled	product_name_filled		category_id_filled	category_filled	subcategory_filled	maintenance_filled	cost_filled		product_line_filled	start_date_filled
 295			295					295					295						295						295					288				288					288					295				295					295*/
+SELECT * 
+FROM gold.dim_products
+WHERE category IS NULL OR subcategory IS NULL OR maintenance IS NULL;
+/*INSIGHT
+All the nulls values in the category, subcategory and maintenance fields are of same records.
+The products in all these rows are some kind of pedals, which can be classified as components.
+The null values here can be corrected in ETL process after discussing with subject matter experts.
+*/
 -- ****************************************************************************************************************************************************************************************************************
 --category (Frequency Distribution)
 SELECT
