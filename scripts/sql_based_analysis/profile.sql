@@ -151,14 +151,73 @@ order_fiscal_first_day_of_year		date		NULL
 order_fiscal_last_day_of_year		date		NULL
 */
 -- ----------------------------------------------------------------------------------------------------------------------------------
-
--- fact_sales
+-- dim_due_date
 SELECT  COLUMN_NAME,
 		DATA_TYPE,
 		CHARACTER_MAXIMUM_LENGTH AS MAX_LENGTH
 FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME = N'fact_sales'
+WHERE TABLE_NAME = N'dim_due_date'
 
+-- =====================================================================================================================================
+-- Result :
+-- ------------------------------------------------------------------------------------------------------------------------------------
+/*
+COLUMN_NAME									DATA_TYPE	MAX_LENGTH
+due_date_key								int			NULL
+due_date									datetime	NULL
+due_full_date								char		10
+due_day_of_month							varchar		2
+due_day_suffix								varchar		4
+due_day_name								varchar		9
+due_day_of_week								char		1
+due_day_of_week_in_month					varchar		2
+due_day_of_week_in_year						varchar		2
+due_day_of_quarter							varchar		3
+due_day_of_year								varchar		3
+due_week_of_month							varchar		1
+due_week_of_quarter							varchar		2
+due_week_of_year							varchar		2
+due_month									varchar		2
+due_month_name								varchar		9
+due_month_of_quarter						varchar		2
+due_quarter									char		1
+due_quarter_name							varchar		9
+due_year									char		4
+due_year_name								char		7
+due_month_year								char		10
+due_mmyyyy									char		6
+due_first_day_of_month						date		NULL
+due_last_day_of_month						date		NULL
+due_first_day_of_quarter					date		NULL
+due_last_day_of_quarter						date		NULL
+due_first_day_of_year						date		NULL
+due_last_day_of_year						date		NULL
+due_season									char		15
+due_is_holiday								bit			NULL
+due_is_weekday								bit			NULL
+due_holiday_name							varchar		50
+due_fiscal_day_of_year						varchar		3
+due_fiscal_week_of_year						varchar		3
+due_fiscal_month							varchar		2
+due_fiscal_quarter							char		1
+due_fiscal_quarter_name						varchar		9
+due_fiscal_year								char		4
+due_fiscal_year_name						char		7
+due_fiscal_month_year						char		10
+due_fiscal_mmyyyy							char		6
+due_fiscal_first_day_of_month				date		NULL
+due_fiscal_last_day_of_month				date		NULL
+due_fiscal_first_day_of_quarter				date		NULL
+due_fiscal_last_day_of_quarter				date		NULL
+due_fiscal_first_day_of_year				date		NULL
+due_fiscal_last_day_of_year					date		NULL*/
+-- ------------------------------------------------------------------------------------------------------------------------------------
+-- dim_shipping_date
+SELECT  COLUMN_NAME,
+		DATA_TYPE,
+		CHARACTER_MAXIMUM_LENGTH AS MAX_LENGTH
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = N'dim_shipping_date'
 /*
 -- ======================================================================================================================================
 -- Result:
@@ -173,6 +232,72 @@ due_date_key		int			NULL
 sales_amount		int			NULL
 quantity			int			NULL
 price				int			NULL
+*/
+-- ----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+-- fact_sales
+SELECT  COLUMN_NAME,
+		DATA_TYPE,
+		CHARACTER_MAXIMUM_LENGTH AS MAX_LENGTH
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = N'fact_sales'
+
+/*
+-- ======================================================================================================================================
+-- Result:
+-- ---------------------------------------------------------------------------------------------------------------------------------------
+COLUMN_NAME									DATA_TYPE	MAX_LENGTH
+shipping_date_key							int			NULL
+shipping_date								datetime	NULL
+shipping_full_date							char		10
+shipping_day_of_month						varchar		2
+shipping_day_suffix							varchar		4
+shipping_day_name							varchar		9
+shipping_day_of_week						char		1
+shipping_day_of_week_in_month				varchar		2
+shipping_day_of_week_in_year				varchar		2
+shipping_day_of_quarter						varchar		3
+shipping_day_of_year						varchar		3
+shipping_week_of_month						varchar		1
+shipping_week_of_quarter					varchar		2
+shipping_week_of_year						varchar		2
+shipping_month								varchar		2
+shipping_month_name							varchar		9
+shipping_month_of_quarter					varchar		2
+shipping_quarter							char		1
+shipping_quarter_name						varchar		9
+shipping_year								char		4
+shipping_year_name							char		7
+shipping_month_year							char		10
+shipping_mmyyyy								char		6
+shipping_first_day_of_month					date		NULL
+shipping_last_day_of_month					date		NULL
+shipping_first_day_of_quarter				date		NULL
+shipping_last_day_of_quarter				date		NULL
+shipping_first_day_of_year					date		NULL
+shipping_last_day_of_year					date		NULL
+shipping_season								char		15
+shipping_is_holiday							bit			NULL
+shipping_is_weekday							bit			NULL
+shipping_holiday_name						varchar		50
+shipping_fiscal_day_of_year					varchar		3
+shipping_fiscal_week_of_year				varchar		3
+shipping_fiscal_month						varchar		2
+shipping_fiscal_quarter						char		1
+shipping_fiscal_quarter_name				varchar		9
+shipping_fiscal_year						char		4
+shipping_fiscal_year_name					char		7
+shipping_fiscal_month_year					char		10
+shipping_fiscal_mmyyyy						char		6
+shipping_fiscal_first_day_of_month			date		NULL
+shipping_fiscal_last_day_of_month			date		NULL
+shipping_fiscal_first_day_of_quarter		date		NULL
+shipping_fiscal_last_day_of_quarter			date		NULL
+shipping_fiscal_first_day_of_year			date		NULL
+shipping_fiscal_last_day_of_year			date		NULL
 */
 -- ----------------------------------------------------------------------------------------------------------------------------------
 -- Quering number of records in each views
