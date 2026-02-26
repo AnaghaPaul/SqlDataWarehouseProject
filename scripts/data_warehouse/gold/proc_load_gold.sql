@@ -247,6 +247,43 @@ CREATE OR ALTER PROCEDURE gold.load_gold AS -- stored procedure
 	TRUNCATE TABLE gold.fact_sales;
 	PRINT'>> Inserting Data Into : gold.fact_sales';
 -- Insert
+	INSERT INTO gold.fact_sales
+	(
+		order_number,
+		product_key,
+		customer_key,
+		order_date_key,
+		shipping_date_key,
+		due_date_key,
+		sales_amount,
+		quantity,
+		price
+	)
+	SELECT 
+	    sd.sls_ord_num,
+	    pr.product_key,
+	    cu.customer_key, 
+	    YEAR(sd.sls_order_dt) * 10000 + MONTH(sd.sls_order_dt) * 100 + DAY(sd.sls_order_dt),
+	    YEAR(sd.sls_ship_dt) * 10000 + MONTH(sd.sls_ship_dt)*100 +DAY(sd.sls_ship_dt),
+	    YEAR(sd.sls_due_dt) * 10000 + MONTH(sd.sls_due_dt)*100 + DAY(sd.sls_due_dt),
+	    sd.sls_sales,
+	    sd.sls_quantity,
+	    sd.sls_price
+	  FROM silver.crm_sales_details sd
+	  LEFT JOIN gold.dim_products pr
+	  ON		  sd.sls_prd_key = pr.product_number
+	  LEFT JOIN gold.dim_customers cu
+	  ON		  sd.sls_cust_id = cu.customer_id;
+
+	SET @end_load_time = GETDATE();
+	PRINT '>>Loading to gold.fact_sales completed successfully';
+	PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
+	PRINT '-------------------------------------------------------------------------------------------------';
+	PRINT '>>Fact table truncated and loaded successfully.';
+	PRINT '=================================================================================================';
+	PRINT '>> Fact and all Dimensions table loaded successfully.';
+	PRINT '=================================================================================================';
+
 
 	
 	
