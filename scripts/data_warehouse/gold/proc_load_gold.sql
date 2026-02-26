@@ -73,6 +73,56 @@ CREATE OR ALTER PROCEDURE gold.load_gold AS -- stored procedure
   PRINT '>>Loading to gold.dim_customers completed successfully';
   			PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
   			PRINT '-------------------------------------------------------------------------------------------------';
--- Loding completed for gold.dim_customers
+-- Loading completed for gold.dim_customers
 -- ===================================================================================================================
+-- Truncating and Inserting Data into gold.dim_products
+	PRINT '>>Preparing to truncate and load gold.dim_products';
+	SET @start_load_time = GETDATE();
+-- Truncate
+	PRINT'>> Truncating Table : gold.dim_products';
+	TRUNCATE TABLE gold.dim_products;
+	PRINT'>> Inserting Data Into : gold.dim_products';
+-- Insert
+	INSERT INTO gold.dim_products(
+	product_key,
+	product_id,
+	product_number,
+	product_name,
+	category_id,
+	category,
+	subcategory,
+	maintenance,
+	cost,
+	product_line,
+	start_date
+	)
+	SELECT
+	  	ROW_NUMBER() OVER (ORDER BY pn.prd_start_dt, pn.prd_key) AS product_key, 
+	  	pn.prd_id AS product_id,
+	  	pn.prd_key AS product_number,
+	  	pn.prd_name AS product_name,
+	  	pn.cat_id AS category_id,
+	  	pc.cat AS category,
+	  	pc.subcat AS subcategory,
+	  	pc.maintenance,
+	  	pn.prd_cost AS cost,
+	  	pn.prd_line AS product_line,
+	  	pn.prd_start_dt AS start_date
+	  FROM silver.crm_prd_info pn
+	  LEFT JOIN silver.erp_px_cat_g1v2 pc
+	  ON        pn.cat_id = pc.id
+	  WHERE prd_end_dt IS NULL-- Filter out all historicaldata
+		
+	SET @end_load_time = GETDATE();
+	PRINT '>>Loading to gold.dim_products completed successfully';
+	PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
+	PRINT '-------------------------------------------------------------------------------------------------';
+-- ---------------------------------------------------------------------------------------------------------------------
+
+
+	
+	
+	
+
+
 
