@@ -14,3 +14,20 @@ gender VARCHAR(20),
 birthdate DATE,
 create_date DATE
 );
+
+-- gold.dim_products
+IF OBJECT_ID('gold.dim_products','U') IS NOT NULL
+	DROP TABLE gold.dim_products;
+GO
+CREATE TABLE gold.dim_products(
+product_key INT,
+product_id INT,
+product_number NVARCHAR(50),
+product_name NVARCHAR(50),
+category_id NVARCHAR(50),
+subcategory VARCHAR(50),
+maintenance VARCHAR(50),
+cost INT,
+product_line NVARCHAR(50),
+start_date DATE
+)
