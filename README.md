@@ -133,15 +133,27 @@ The ERP system enriches CRM data with **operational, demographic, and hierarchic
 
 ## ⭐ 1. Dimensional Modeling – Star Schema
 
-The analytical layer is implemented using a **Star Schema**, optimized for reporting and BI workloads.
+The analytical layer is implemented using a Star Schema, optimized for reporting and BI workloads.
 
-### Structure
+Structure
 
-- Central fact table: `fact_sales`
-- Conformed dimension tables:
-  - `dim_customer`
-  - `dim_product`
-  - `dim_date` (role-playing: order date, shipping date, due date)
+Central fact table: fact_sales
+
+Conformed dimension tables:
+
+dim_customer
+
+dim_product
+
+dim_date (physical table for storage)
+
+Role-playing dimension views:
+
+dim_order_date
+
+dim_shipping_date
+
+dim_due_date
 
 ### Declared Grain
 
@@ -284,28 +296,7 @@ The warehouse follows a structured layered architecture.
 - Stable semantic layer for BI tools  
 
 ---
-
-## 🔐 4. Gold Layer Views – Security & Access Management
-
-The Gold layer exposes **SQL views** rather than direct table access.
-
-### Purpose
-
-- Restrict direct access to base tables  
-- Enforce role-based security  
-- Mask sensitive columns  
-- Provide abstraction from physical schema  
-
-### Governance Benefits
-
-| Feature | Benefit |
-|----------|---------|
-| Role-based access | Controlled exposure of data |
-| Column-level filtering | Protection of sensitive attributes |
-| Schema abstraction | Safe structural evolution |
-| Stable BI interface | Prevents dashboard disruption |
-
-Views act as a governance boundary between storage and business consumption.
+  
 
 ---
 
@@ -314,20 +305,6 @@ Views act as a governance boundary between storage and business consumption.
 ![Data Flow](docs/data_warehouse_docs/data_flow.png)
 
 ---
-
-<!--# ❄️ Snowflake Schema (Alternative Model)
-
-A normalized dimensional version is available:
-
-![Snowflake Model](data_warehouse_snowflake/docs/data_model.png)
-
-This version:
-
-- Separates hierarchical attributes  
-- Reduces redundancy  
-- Supports complex global hierarchies  
-
-The Star Schema remains the primary analytical model.-->
 
 ---
 
