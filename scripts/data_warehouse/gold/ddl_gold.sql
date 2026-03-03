@@ -43,7 +43,7 @@
 	    date DATETIME,
 	    full_date CHAR(10),-- Date in MM-dd-yyyy format
 	    day_of_month VARCHAR(2), -- Field will hold day number of Month
-	    day_suffix VARCHAR(4), -- Apply suffix as 1st, 2nd ,3rd etc
+	    day_suffix VARCHAR(7), -- Apply suffix as 1st, 2nd ,3rd etc
 	    day_name VARCHAR(9), -- Contains name of the day, Sunday, Monday 
 	    day_of_week CHAR(1),-- First Day Sunday=1 and Saturday=7
 	    day_of_week_in_month VARCHAR(2), --1st Monday or 2nd Monday in Month
@@ -55,8 +55,8 @@
 	    week_of_year VARCHAR(2),--Week Number of the Year
 	    month VARCHAR(2), --Number of the Month 1 to 12
 	    month_name VARCHAR(9),--January, February etc
-	    month_of_quarter VARCHAR(2),-- Month Number belongs to Quarter
-	    quarter CHAR(1),
+	    month_of_quarter VARCHAR(7),-- Month Number belongs to Quarter
+	    quarter CHAR(7),
 	    quarter_name VARCHAR(9),--First,Second..
 	    year CHAR(4),-- Year value of Date stored in Row
 	    year_name CHAR(7), --CY 2012,CY 2013
@@ -88,6 +88,7 @@
 		fiscal_first_day_of_year DATE,
 		fiscal_last_day_of_year DATE,
 	);
+
 -- gold.fact_sales
 	IF OBJECT_ID('gold.fact_sales','U') IS NOT NULL
 		DROP TABLE gold.fact_sales
