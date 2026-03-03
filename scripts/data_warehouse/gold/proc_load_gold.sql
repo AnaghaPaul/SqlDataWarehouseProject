@@ -30,202 +30,310 @@ CREATE OR ALTER PROCEDURE gold.load_gold AS -- stored procedure
 			PRINT '-------------------------------------------------------------------------------------------------';
 -- ==========================================================================
 -- Truncating and Inserting Data into gold.dim_customers
-    PRINT '>>Preparing to truncate and load gold.dim_customers';
-    SET @start_load_time = GETDATE();
+			PRINT '>>Preparing to truncate and load gold.dim_customers';
+			SET @start_load_time = GETDATE();
 -- Truncate
-    PRINT'>> Truncating Table : gold.dim_customers';
-    TRUNCATE TABLE gold.dim_customers;
-    PRINT'>> Inserting Data Into : gold.dim_customers';
+			PRINT'>> Truncating Table : gold.dim_customers';
+			TRUNCATE TABLE gold.dim_customers;
+			PRINT'>> Inserting Data Into : gold.dim_customers';
 --Insert
-  INSERT INTO gold.dim_customers
-  (
-  	customer_key,
-  	customer_id,
-  	customer_number,
-  	first_name,
-  	last_name,
-  	country,
-  	marital_status,
-  	gender,
-  	birthdate,
-  	create_date
-  )
-  SELECT
-    		ROW_NUMBER() OVER (ORDER BY cst_id),
-    		ci.cst_id,
-    		ci.cst_key,
-    		ci.cst_firstname,
-    		ci.cst_lastname,
-    		la.cntry,
-    		ci.cst_marital_status,
-    		CASE  WHEN ci.cst_gndr != 'n/a' THEN ci.cst_gndr -- CRM is the master for gender info
-    			  ELSE COALESCE(ca.gen,'n/a')
-    		END,
-    		ca.bdate,
-    		ci.cst_create_date	
-    FROM silver.crm_cust_info ci
-    LEFT JOIN silver.erp_cust_az12 ca
-    ON		  ci.cst_key = ca.cid
-    LEFT JOIN silver.erp_loc_a101 la
-    ON        ci.cst_key = la.cid;
+			INSERT INTO gold.dim_customers
+			  (
+  				customer_key,
+  				customer_id,
+  				customer_number,
+  				first_name,
+  				last_name,
+  				country,
+  				marital_status,
+  				gender,
+  				birthdate,
+  				create_date
+			  )
+			  SELECT
+    					ROW_NUMBER() OVER (ORDER BY cst_id),
+    					ci.cst_id,
+    					ci.cst_key,
+    					ci.cst_firstname,
+    					ci.cst_lastname,
+    					la.cntry,
+    					ci.cst_marital_status,
+    					CASE  WHEN ci.cst_gndr != 'n/a' THEN ci.cst_gndr -- CRM is the master for gender info
+    						  ELSE COALESCE(ca.gen,'n/a')
+    					END,
+    					ca.bdate,
+    					ci.cst_create_date	
+				FROM silver.crm_cust_info ci
+				LEFT JOIN silver.erp_cust_az12 ca
+				ON		  ci.cst_key = ca.cid
+				LEFT JOIN silver.erp_loc_a101 la
+				ON        ci.cst_key = la.cid;
 
-  SET @end_load_time = GETDATE();
-  PRINT '>>Loading to gold.dim_customers completed successfully';
-  			PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
-  			PRINT '-------------------------------------------------------------------------------------------------';
+				SET @end_load_time = GETDATE();
+				PRINT '>>Loading to gold.dim_customers completed successfully';
+  				PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
+  				PRINT '-------------------------------------------------------------------------------------------------';
 -- Loading completed for gold.dim_customers
 -- ===================================================================================================================
 -- Truncating and Inserting Data into gold.dim_products
-	PRINT '>>Preparing to truncate and load gold.dim_products';
-	SET @start_load_time = GETDATE();
+				PRINT '>>Preparing to truncate and load gold.dim_products';
+				SET @start_load_time = GETDATE();
 -- Truncate
-	PRINT'>> Truncating Table : gold.dim_products';
-	TRUNCATE TABLE gold.dim_products;
-	PRINT'>> Inserting Data Into : gold.dim_products';
+				PRINT'>> Truncating Table : gold.dim_products';
+				TRUNCATE TABLE gold.dim_products;
+				PRINT'>> Inserting Data Into : gold.dim_products';
 -- Insert
-	INSERT INTO gold.dim_products(
-	product_key,
-	product_id,
-	product_number,
-	product_name,
-	category_id,
-	category,
-	subcategory,
-	maintenance,
-	cost,
-	product_line,
-	start_date
-	)
-	SELECT
-	  	ROW_NUMBER() OVER (ORDER BY pn.prd_start_dt, pn.prd_key), 
-	  	pn.prd_id,
-	  	pn.prd_key,
-	  	pn.prd_name,
-	  	pn.cat_id,
-	  	pc.cat,
-	  	pc.subcat,
-	  	pc.maintenance,
-	  	pn.prd_cost,
-	  	pn.prd_line,
-	  	pn.prd_start_dt
-	  FROM silver.crm_prd_info pn
-	  LEFT JOIN silver.erp_px_cat_g1v2 pc
-	  ON        pn.cat_id = pc.id
-	  WHERE prd_end_dt IS NULL-- Filter out all historicaldata
+				INSERT INTO gold.dim_products(
+				product_key,
+				product_id,
+				product_number,
+				product_name,
+				category_id,
+				category,
+				subcategory,
+				maintenance,
+				cost,
+				product_line,
+				start_date
+				)
+				SELECT
+	  				ROW_NUMBER() OVER (ORDER BY pn.prd_start_dt, pn.prd_key), 
+	  				pn.prd_id,
+	  				pn.prd_key,
+	  				pn.prd_name,
+	  				pn.cat_id,
+	  				pc.cat,
+	  				pc.subcat,
+	  				pc.maintenance,
+	  				pn.prd_cost,
+	  				pn.prd_line,
+	  				pn.prd_start_dt
+				  FROM silver.crm_prd_info pn
+				  LEFT JOIN silver.erp_px_cat_g1v2 pc
+				  ON        pn.cat_id = pc.id
+				  WHERE prd_end_dt IS NULL-- Filter out all historicaldata
 		
-	SET @end_load_time = GETDATE();
-	PRINT '>>Loading to gold.dim_products completed successfully';
-	PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
-	PRINT '-------------------------------------------------------------------------------------------------';
+				SET @end_load_time = GETDATE();
+				PRINT '>>Loading to gold.dim_products completed successfully';
+				PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
+				PRINT '-------------------------------------------------------------------------------------------------';
 -- ---------------------------------------------------------------------------------------------------------------------
-	PRINT '>>Preparing to truncate and load gold.dim_date';
-	SET @start_load_time = GETDATE();
+				PRINT '>>Preparing to truncate and load gold.dim_date';
+				SET @start_load_time = GETDATE();
 -- Truncate
-	PRINT'>> Truncating Table : gold.dim_date';
-	TRUNCATE TABLE gold.dim_date;
-	PRINT'>> Inserting Data Into : gold.dim_date';
+				PRINT'>> Truncating Table : gold.dim_date';
+				TRUNCATE TABLE gold.dim_date;
+				PRINT'>> Inserting Data Into : gold.dim_date';
 -- Insert
-	INSERT INTO gold.dim_date
-	(
-	    date_key, 
-	    date,
-	    full_date,-- Date in MM-dd-yyyy format
-	    day_of_month, -- Field will hold day number of Month
-	    day_suffix, -- Apply suffix as 1st, 2nd ,3rd etc
-	    day_name, -- Contains name of the day, Sunday, Monday 
-	    day_of_week,-- First Day Sunday=1 and Saturday=7
-	    day_of_week_in_month, --1st Monday or 2nd Monday in Month
-	    day_of_week_in_year,
-	    day_of_quarter, 
-	    day_of_year,
-	    week_of_month,-- Week Number of Month 
-	    week_of_quarter, --Week Number of the Quarter
-	    week_of_year,--Week Number of the Year
-	    month, --Number of the Month 1 to 12
-	    month_name,--January, February etc
-	    month_of_quarter,-- Month Number belongs to Quarter
-	    quarter,
-	    quarter_name,--First,Second..
-	    year,-- Year value of Date stored in Row
-	    year_name, --CY 2012,CY 2013
-	    month_year, --Jan-2013,Feb-2013
-	    mmyyyy,
-	    first_day_of_month,
-	    last_day_of_month,
-	    first_day_of_quarter,
-	    last_day_of_quarter,
-	    first_day_of_year,
-	    last_day_of_year,
-		season,
-		is_holiday,-- Flag 1=Global Holiday, 0-No Global Holiday
-	    is_weekday,-- 0=Week End ,1=Week Day
-		holiday_name,--Name of Global
-		fiscal_day_of_year,
-		fiscal_week_of_year,
-		fiscal_month,
-		fiscal_quarter,
-		fiscal_quarter_name,
-		fiscal_year,
-		fiscal_year_name,
-		fiscal_month_year,
-		fiscal_mmyyyy,
-		fiscal_first_day_of_month,
-		fiscal_last_day_of_month,
-		fiscal_first_day_of_quarter,
-		fiscal_last_day_of_quarter,
-		fiscal_first_day_of_year,
-		fiscal_last_day_of_year
-	)
-	SELECT
-		date_key, 
-	    date,
-	    full_date,
-	    day_of_month,
-	    day_suffix,
-	    day_name,
-	    day_of_week,
-	    day_of_week_in_month,
-	    day_of_week_in_year,
-	    day_of_quarter, 
-	    day_of_year,
-	    week_of_month,
-	    week_of_quarter,
-	    week_of_year,
-	    month,
-	    month_name,
-	    month_of_quarter,
-	    quarter,
-	    quarter_name,
-	    year,
-	    year_name,
-	    month_year,
-	    mmyyyy,
-	    first_day_of_month,
-	    last_day_of_month,
-	    first_day_of_quarter,
-	    last_day_of_quarter,
-	    first_day_of_year,
-	    last_day_of_year,
-		season,
-		is_holiday,
-	    is_weekday,
-		holiday_name,
-		fiscal_day_of_year,
-		fiscal_week_of_year,
-		fiscal_month,
-		fiscal_quarter,
-		fiscal_quarter_name,
-		fiscal_year,
-		fiscal_year_name,
-		fiscal_month_year,
-		fiscal_mmyyyy,
-		fiscal_first_day_of_month,
-		fiscal_last_day_of_month,
-		fiscal_first_day_of_quarter,
-		fiscal_last_day_of_quarter,
-		fiscal_first_day_of_year,
-		fiscal_last_day_of_year
-	FROM silver.dwh_dim_date
+				INSERT INTO gold.dim_date
+				(
+					date_key, 
+					date,
+					full_date,-- Date in MM-dd-yyyy format
+					day_of_month, -- Field will hold day number of Month
+					day_suffix, -- Apply suffix as 1st, 2nd ,3rd etc
+					day_name, -- Contains name of the day, Sunday, Monday 
+					day_of_week,-- First Day Sunday=1 and Saturday=7
+					day_of_week_in_month, --1st Monday or 2nd Monday in Month
+					day_of_week_in_year,
+					day_of_quarter, 
+					day_of_year,
+					week_of_month,-- Week Number of Month 
+					week_of_quarter, --Week Number of the Quarter
+					week_of_year,--Week Number of the Year
+					month, --Number of the Month 1 to 12
+					month_name,--January, February etc
+					month_of_quarter,-- Month Number belongs to Quarter
+					quarter,
+					quarter_name,--First,Second..
+					year,-- Year value of Date stored in Row
+					year_name, --CY 2012,CY 2013
+					month_year, --Jan-2013,Feb-2013
+					mmyyyy,
+					first_day_of_month,
+					last_day_of_month,
+					first_day_of_quarter,
+					last_day_of_quarter,
+					first_day_of_year,
+					last_day_of_year,
+					season,
+					is_holiday,-- Flag 1=Global Holiday, 0-No Global Holiday
+					is_weekday,-- 0=Week End ,1=Week Day
+					holiday_name,--Name of Global
+					fiscal_day_of_year,
+					fiscal_week_of_year,
+					fiscal_month,
+					fiscal_quarter,
+					fiscal_quarter_name,
+					fiscal_year,
+					fiscal_year_name,
+					fiscal_month_year,
+					fiscal_mmyyyy,
+					fiscal_first_day_of_month,
+					fiscal_last_day_of_month,
+					fiscal_first_day_of_quarter,
+					fiscal_last_day_of_quarter,
+					fiscal_first_day_of_year,
+					fiscal_last_day_of_year
+				)
+				SELECT
+					date_key, 
+					date,
+					full_date,
+					day_of_month,
+					day_suffix,
+					day_name,
+					day_of_week,
+					day_of_week_in_month,
+					day_of_week_in_year,
+					day_of_quarter, 
+					day_of_year,
+					week_of_month,
+					week_of_quarter,
+					week_of_year,
+					month,
+					month_name,
+					month_of_quarter,
+					quarter,
+					quarter_name,
+					year,
+					year_name,
+					month_year,
+					mmyyyy,
+					first_day_of_month,
+					last_day_of_month,
+					first_day_of_quarter,
+					last_day_of_quarter,
+					first_day_of_year,
+					last_day_of_year,
+					season,
+					is_holiday,
+					is_weekday,
+					holiday_name,
+					fiscal_day_of_year,
+					fiscal_week_of_year,
+					fiscal_month,
+					fiscal_quarter,
+					fiscal_quarter_name,
+					fiscal_year,
+					fiscal_year_name,
+					fiscal_month_year,
+					fiscal_mmyyyy,
+					fiscal_first_day_of_month,
+					fiscal_last_day_of_month,
+					fiscal_first_day_of_quarter,
+					fiscal_last_day_of_quarter,
+					fiscal_first_day_of_year,
+					fiscal_last_day_of_year
+				FROM silver.dwh_dim_date
+
+	-- Insert Unknown (-1) record into gold.dim_date
+				PRINT '>> Inserting Unknown (-1) record into gold.dim_date';
+
+				INSERT INTO gold.dim_date
+					(
+					date_key, 
+					date,
+					full_date,-- Date in MM-dd-yyyy format
+					day_of_month, -- Field will hold day number of Month
+					day_suffix, -- Apply suffix as 1st, 2nd ,3rd etc
+					day_name, -- Contains name of the day, Sunday, Monday 
+					day_of_week,-- First Day Sunday=1 and Saturday=7
+					day_of_week_in_month, --1st Monday or 2nd Monday in Month
+					day_of_week_in_year,
+					day_of_quarter, 
+					day_of_year,
+					week_of_month,-- Week Number of Month 
+					week_of_quarter, --Week Number of the Quarter
+					week_of_year,--Week Number of the Year
+					month, --Number of the Month 1 to 12
+					month_name,--January, February etc
+					month_of_quarter,-- Month Number belongs to Quarter
+					quarter,
+					quarter_name,--First,Second..
+					year,-- Year value of Date stored in Row
+					year_name, --CY 2012,CY 2013
+					month_year, --Jan-2013,Feb-2013
+					mmyyyy,
+					first_day_of_month,
+					last_day_of_month,
+					first_day_of_quarter,
+					last_day_of_quarter,
+					first_day_of_year,
+					last_day_of_year,
+					season,
+					is_holiday,-- Flag 1=Global Holiday, 0-No Global Holiday
+					is_weekday,-- 0=Week End ,1=Week Day
+					holiday_name,--Name of Global
+					fiscal_day_of_year,
+					fiscal_week_of_year,
+					fiscal_month,
+					fiscal_quarter,
+					fiscal_quarter_name,
+					fiscal_year,
+					fiscal_year_name,
+					fiscal_month_year,
+					fiscal_mmyyyy,
+					fiscal_first_day_of_month,
+					fiscal_last_day_of_month,
+					fiscal_first_day_of_quarter,
+					fiscal_last_day_of_quarter,
+					fiscal_first_day_of_year,
+					fiscal_last_day_of_year
+					)
+					SELECT
+						-1 AS date_key,
+						NULL AS date,
+						'Unknown' AS full_date,
+						Null AS day_of_month,
+						'Unknown' AS day_suffix,
+						'Unknown' AS day_name,
+						NULL AS day_of_week,
+						NULL AS day_of_week_in_month,
+						NULL AS day_of_week_in_year,
+						NULL AS day_of_quarter,
+						NULL AS day_of_year,
+						NULL AS week_of_month,
+						NULL AS week_of_quarter,
+						NULL AS week_of_year,
+						NULL AS month,
+						'Unknown' AS month_name,
+						'Unknown' AS month_of_quarter,
+						'Unknown' AS quarter,
+						'Unknown' AS quarter_name,
+						NULL AS YEAR,
+						'Unknown' AS year_name,
+						'Unknown' AS month_year,
+						NULL AS mmyyyy,
+						NULL AS first_day_of_month,
+						NULL AS last_day_of_month,
+						NULL AS first_day_of_quarter,
+						NULL AS last_day_of_quarter,
+						NULL AS first_day_of_year,
+						NULL AS last_day_of_year,
+						'Unknown' AS season,
+						NULL AS is_holiday,
+						NULL AS is_weekday,
+						'Unknown' AS holiday_name,
+						NULL AS fiscal_day_of_year,
+						NULL AS fiscal_week_of_year,
+						NULL AS fiscal_month,
+						NULL AS fiscal_quarter,
+						'Unknown' AS fiscal_quarter_name,
+						NULL AS fiscal_year,
+						'Unknown' AS fiscal_year_name,
+						'Unknown' AS fiscal_month_year,
+						NULL AS fiscal_mmyyyy,
+						NULL AS fiscal_first_day_of_month,
+						NULL AS fiscal_last_day_of_month,
+						NULL AS fiscal_first_day_of_quarter,
+						NULL AS fiscal_last_day_of_quarter,
+						NULL AS fiscal_first_day_of_year,
+						NULL AS fiscal_last_day_of_year;
+
+		PRINT '>> Unknown (-1) record inserted into gold.dim_date';
+		PRINT '-------------------------------------------------------------------------------------------------';
+
 	SET @end_load_time = GETDATE();
 	PRINT '>>Loading to gold.dim_date completed successfully';
 	PRINT '>>Load Duration:' +CAST(DATEDIFF(second,@start_load_time,@end_load_time) AS NVARCHAR)+ ' seconds';
@@ -263,9 +371,9 @@ CREATE OR ALTER PROCEDURE gold.load_gold AS -- stored procedure
 	    sd.sls_ord_num,
 	    pr.product_key,
 	    cu.customer_key, 
-	    YEAR(sd.sls_order_dt) * 10000 + MONTH(sd.sls_order_dt) * 100 + DAY(sd.sls_order_dt),
-	    YEAR(sd.sls_ship_dt) * 10000 + MONTH(sd.sls_ship_dt)*100 +DAY(sd.sls_ship_dt),
-	    YEAR(sd.sls_due_dt) * 10000 + MONTH(sd.sls_due_dt)*100 + DAY(sd.sls_due_dt),
+	    ISNULL(YEAR(sd.sls_order_dt) * 10000 + MONTH(sd.sls_order_dt) * 100 + DAY(sd.sls_order_dt),-1),
+	    ISNULL(YEAR(sd.sls_ship_dt) * 10000 + MONTH(sd.sls_ship_dt)*100 +DAY(sd.sls_ship_dt),-1),
+	    ISNULL(YEAR(sd.sls_due_dt) * 10000 + MONTH(sd.sls_due_dt)*100 + DAY(sd.sls_due_dt),-1),
 	    sd.sls_sales,
 	    sd.sls_quantity,
 	    sd.sls_price
@@ -303,16 +411,4 @@ CREATE OR ALTER PROCEDURE gold.load_gold AS -- stored procedure
 		END CATCH			
 	END
 
-
-	
-	
-	
-
-
-
-	
-	
-	
-
-
-
+	EXEC gold.load_gold
