@@ -105,3 +105,36 @@ cohort_year	average_revenue_per_customer
 2013	       482
 2014	       172
 */
+--_____________________________________________________________________YEAR 2013 - comparing customers according to the month they arrived_________________________________
+SELECT
+    month,
+    COUNT(customer_key) AS customers
+FROM (
+    SELECT
+        f.customer_key AS customer_key,
+        MIN(s.shipping_year) AS first_shipping_year,
+        MIN(s.shipping_month) AS first_shipping_month,
+        s.shipping_month_name AS month
+    FROM gold.fact_sales AS f
+    JOIN gold.dim_shipping_date AS s
+        ON f.shipping_date_key = s.shipping_date_key
+    GROUP BY f.customer_key, s.shipping_month_name, s.shipping_month
+) a
+WHERE first_shipping_year = 2013
+GROUP BY first_shipping_month, month
+ORDER BY first_shipping_month;
+/*
+month	    customers
+January	    465
+October	    1923
+November	2018
+December	2117
+February	1242
+March	    1596
+April	    1538
+May        	1621
+June	    1886
+July	    1756
+August	    1828
+September	1746
+*/
