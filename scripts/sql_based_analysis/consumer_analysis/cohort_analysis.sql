@@ -1,109 +1,87 @@
 -- ___________________________________________________________Cohort Analysis___________________________________________________________________________________
 /* A Cohort Analysis compares similar groups over time.*/
 -- Type of cohort analysis - Returnship - Repeat Purchase Behaviour
+
+-- Assigning each customers to cohorts according to the acquisition year
+
 SELECT
-first_shipping_year AS cohort_year,
-COUNT(customer_key) AS customers
+MIN(o.order_year) AS cohort,
+s.customer_key AS customer_key
 FROM
-(SELECT
-f.customer_key AS customer_key,
-MIN(s.shipping_year) AS first_shipping_year
-FROM
-gold.fact_sales AS f
+gold.fact_sales AS s
 JOIN
-gold.dim_shipping_date  AS s
-ON f.shipping_date_key = s.shipping_date_key
-GROUP BY f.customer_key)a
-GROUP BY first_shipping_year;
-/*
-cohort_year	total_customers
-2014      	   715
-2013	      12371
-2012	      3220
-2011	      2178
-*/
-WITH customer_cohort AS(
+gold.dim_order_date AS o
+ON s.order_date_key = o.order_date_key
+GROUP BY s.customer_key
+ORDER BY MIN(o.order_year);
+
+-- Total customers in each cohort
+WITH customer_cohort AS
+(
 SELECT
-f.customer_key,
-MIN(s.shipping_year) AS cohort_year,
-SUM(f.sales_amount) AS revenue_per_customer
+s.customer_key AS customer_key,
+MIN(o.order_year) AS cohort
 FROM
-gold.fact_sales AS f
+gold.fact_sales AS s
 JOIN
-gold.dim_shipping_date AS s
-ON f.shipping_date_key=s.shipping_date_key
-GROUP BY f.customer_key)
-SELECT 
-customer_cohort.cohort_year,
-SUM(customer_cohort.revenue_per_customer) AS total_revenue_per_cohort
-FROM customer_cohort
-GROUP BY customer_cohort.cohort_year
-ORDER BY customer_cohort.cohort_year;
-/*
-cohort_year	total_revenue_per_cohort
-2011	      11289072
-2012	      11969678
-2013	      5973822
-2014	      123678
-*/
-WITH customer_cohort AS (
-    SELECT
-        f.customer_key,
-        MIN(s.shipping_year) AS cohort_year,
-        SUM(f.sales_amount) AS revenue_per_customer
-    FROM gold.fact_sales AS f
-    JOIN gold.dim_shipping_date AS s
-        ON f.shipping_date_key = s.shipping_date_key
-    GROUP BY f.customer_key
-),
-cohort_revenue AS (
-    SELECT
-        cohort_year,
-        SUM(revenue_per_customer) AS total_revenue_per_cohort
-    FROM customer_cohort
-    GROUP BY cohort_year
+gold.dim_order_date AS o
+ON s.order_date_key = o.order_date_key
+GROUP BY s.customer_key
 )
-SELECT
-    cohort_year,
-    total_revenue_per_cohort,
-    LAG(total_revenue_per_cohort) OVER (ORDER BY cohort_year) AS prev_year_revenue,
-    ROUND(
-        (total_revenue_per_cohort - LAG(total_revenue_per_cohort) OVER (ORDER BY cohort_year)) 
-        * 100.0 / LAG(total_revenue_per_cohort) OVER (ORDER BY cohort_year),
-        2
-    ) AS revenue_growth_pct
-FROM cohort_revenue
-ORDER BY cohort_year;
-/*
-cohort_year	total_revenue_per_cohort	prev_year_revenue	revenue_growth_pct
-2011	      11289072	                 NULL	            NULL
-2012	      11969678	                 11289072        	6.030000000000
-2013	      5973822	                 11969678      	    -50.090000000000
-2014	      123678	                 5973822	        -97.930000000000
-*/
-WITH customer_cohort AS(
-SELECT
-f.customer_key,
-MIN(s.shipping_year) AS cohort_year,
-SUM(f.sales_amount) AS revenue_per_customer
-FROM
-gold.fact_sales AS f
-JOIN
-gold.dim_shipping_date AS s
-ON f.shipping_date_key=s.shipping_date_key
-GROUP BY f.customer_key)
-SELECT 
-customer_cohort.cohort_year,
-AVG( customer_cohort.revenue_per_customer) AS average_revenue_per_customer
+SELECT cohort, 
+COUNT(DISTINCT customer_key) AS total_customers
 FROM customer_cohort
-GROUP BY customer_cohort.cohort_year
-ORDER BY customer_cohort.cohort_year;
+GROUP BY cohort
+ORDER BY cohort;
 /*
-cohort_year	average_revenue_per_customer
-2011	       5183
-2012	       3717
-2013	       482
-2014	       172
+cohort	    total_customers
+NULL	    2
+2010	    14
+2011	    2216
+2012	    3225
+2013	    12521
+2014	    506
+*/
+
+-- Revenue acquired in each year per cohort
+
+WITH customer_cohort AS
+(
+SELECT
+    s.customer_key,
+    MIN(o.order_year) AS cohort
+FROM gold.fact_sales s
+JOIN gold.dim_order_date o
+    ON s.order_date_key = o.order_date_key
+GROUP BY s.customer_key
+)
+
+SELECT
+    c.cohort,
+    SUM(CASE WHEN o.order_year IS NULL THEN s.sales_amount ELSE 0 END) AS revenue_null,
+    SUM(CASE WHEN o.order_year = NULL THEN s.sales_amount ELSE 0 END) AS revenue_null,
+    SUM(CASE WHEN o.order_year = 2010 THEN s.sales_amount ELSE 0 END) AS revenue_2010,
+    SUM(CASE WHEN o.order_year = 2011 THEN s.sales_amount ELSE 0 END) AS revenue_2011,
+    SUM(CASE WHEN o.order_year = 2012 THEN s.sales_amount ELSE 0 END) AS revenue_2012,
+    SUM(CASE WHEN o.order_year = 2013 THEN s.sales_amount ELSE 0 END) AS revenue_2013,
+    SUM(CASE WHEN o.order_year = 2014 THEN s.sales_amount ELSE 0 END) AS revenue_2014
+
+FROM customer_cohort c
+JOIN gold.fact_sales s
+    ON c.customer_key = s.customer_key
+JOIN gold.dim_order_date o
+    ON s.order_date_key = o.order_date_key
+
+GROUP BY c.cohort
+ORDER BY c.cohort;
+/*
+cohort	revenue_null	revenue_2010	revenue_2011	revenue_2012	revenue_2013	revenue_2014
+NULL	34             	0            	0            	0              	0            	0
+2010	0            	43419        	0            	0            	33796        	0
+2011	2344           	0            	7075088	        60955	        4325414        	0
+2012	2295        	0            	0            	5781276	        6096229        	0
+2013	319            	0	            0            	0	            5889439	        19593
+2014	0            	0	            0            	0            	0            	26049
 */
 --_____________________________________________________________________YEAR 2013 - comparing customers according to the month they arrived_________________________________
 SELECT
