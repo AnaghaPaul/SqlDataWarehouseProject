@@ -170,3 +170,42 @@ July	    1756
 August	    1828
 September	1746
 */
+
+WITH customer_cohort AS
+(
+SELECT
+    f.customer_key,
+    MIN(o.order_year)  AS first_order_year,
+    MIN(o.order_month) AS first_order_month
+FROM gold.fact_sales f
+JOIN gold.dim_order_date o
+    ON f.order_date_key = o.order_date_key
+GROUP BY f.customer_key
+)
+
+SELECT
+    c.first_order_month,
+
+    SUM(CASE WHEN o.order_month = 1  THEN s.sales_amount ELSE 0 END) AS revenue_jan,
+    SUM(CASE WHEN o.order_month = 2  THEN s.sales_amount ELSE 0 END) AS revenue_feb,
+    SUM(CASE WHEN o.order_month = 3  THEN s.sales_amount ELSE 0 END) AS revenue_mar,
+    SUM(CASE WHEN o.order_month = 4  THEN s.sales_amount ELSE 0 END) AS revenue_apr,
+    SUM(CASE WHEN o.order_month = 5  THEN s.sales_amount ELSE 0 END) AS revenue_may,
+    SUM(CASE WHEN o.order_month = 6  THEN s.sales_amount ELSE 0 END) AS revenue_jun,
+    SUM(CASE WHEN o.order_month = 7  THEN s.sales_amount ELSE 0 END) AS revenue_jul,
+    SUM(CASE WHEN o.order_month = 8  THEN s.sales_amount ELSE 0 END) AS revenue_aug,
+    SUM(CASE WHEN o.order_month = 9  THEN s.sales_amount ELSE 0 END) AS revenue_sep,
+    SUM(CASE WHEN o.order_month = 10 THEN s.sales_amount ELSE 0 END) AS revenue_oct,
+    SUM(CASE WHEN o.order_month = 11 THEN s.sales_amount ELSE 0 END) AS revenue_nov,
+    SUM(CASE WHEN o.order_month = 12 THEN s.sales_amount ELSE 0 END) AS revenue_dec
+
+FROM customer_cohort c
+JOIN gold.fact_sales s
+    ON c.customer_key = s.customer_key
+JOIN gold.dim_order_date o
+    ON s.order_date_key = o.order_date_key
+
+WHERE c.first_order_year = 2013
+
+GROUP BY c.first_order_month
+ORDER BY c.first_order_month;
