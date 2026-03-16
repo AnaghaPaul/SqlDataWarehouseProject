@@ -82,6 +82,57 @@ NULL	34             	0            	0            	0              	0            	0
 2013	319            	0	            0            	0	            5889439	        19593
 2014	0            	0	            0            	0            	0            	26049
 */
+
+-- Revenue growth each year
+WITH customer_cohort AS
+(
+SELECT
+    s.customer_key,
+    MIN(o.order_year) AS cohort
+FROM gold.fact_sales s
+JOIN gold.dim_order_date o
+    ON s.order_date_key = o.order_date_key
+GROUP BY s.customer_key
+),
+
+cohort_revenue AS
+(
+SELECT
+    c.cohort,
+    SUM(CASE WHEN o.order_year = 2010 THEN s.sales_amount ELSE 0 END) AS revenue_2010,
+    SUM(CASE WHEN o.order_year = 2011 THEN s.sales_amount ELSE 0 END) AS revenue_2011,
+    SUM(CASE WHEN o.order_year = 2012 THEN s.sales_amount ELSE 0 END) AS revenue_2012,
+    SUM(CASE WHEN o.order_year = 2013 THEN s.sales_amount ELSE 0 END) AS revenue_2013,
+    SUM(CASE WHEN o.order_year = 2014 THEN s.sales_amount ELSE 0 END) AS revenue_2014
+
+FROM customer_cohort c
+JOIN gold.fact_sales s
+    ON c.customer_key = s.customer_key
+JOIN gold.dim_order_date o
+    ON s.order_date_key = o.order_date_key
+
+GROUP BY c.cohort
+)
+
+SELECT
+    cohort,
+	(revenue_2011 - revenue_2010) * 100.0 / NULLIF(revenue_2010,0) AS growth_2011,
+    (revenue_2012 - revenue_2011) * 100.0 / NULLIF(revenue_2011,0) AS growth_2012,
+    (revenue_2013 - revenue_2012) * 100.0 / NULLIF(revenue_2012,0) AS growth_2013,
+    (revenue_2014 - revenue_2013) * 100.0 / NULLIF(revenue_2013,0) AS growth_2014
+
+FROM cohort_revenue
+ORDER BY cohort;
+
+/*
+cohort    	growth_2011            	growth_2012            	growth_2013	            growth_2014
+NULL	    NULL                   	NULL	                NULL	                NULL
+2010	    -100.000000000000	    NULL	                NULL	                -100.000000000000
+2011	    NULL	                -99.138455945706	    6996.077434172750	    -100.000000000000
+2012	    NULL                	NULL                	5.447811175249	        -100.000000000000
+2013	    NULL                	NULL                	NULL                	-99.667319756601
+2014    	NULL	                NULL                	NULL                	NULL
+*/
 --_____________________________________________________________________YEAR 2013 - comparing customers according to the month they arrived_________________________________
 SELECT
     month,
