@@ -134,11 +134,8 @@ NULL	    NULL                   	NULL	                NULL	                NULL
 2014    	NULL	                NULL                	NULL                	NULL
 */
 --_____________________________________________________________________YEAR 2013 - comparing customers according to the month they arrived_________________________________
-SELECT
-    month,
-    COUNT(customer_key) AS customers
-FROM (
-    SELECT
+WITH customer_cohort AS
+(SELECT
         f.customer_key AS customer_key,
         MIN(s.shipping_year) AS first_shipping_year,
         MIN(s.shipping_month) AS first_shipping_month,
@@ -146,11 +143,18 @@ FROM (
     FROM gold.fact_sales AS f
     JOIN gold.dim_shipping_date AS s
         ON f.shipping_date_key = s.shipping_date_key
-    GROUP BY f.customer_key, s.shipping_month_name, s.shipping_month
-) a
-WHERE first_shipping_year = 2013
-GROUP BY first_shipping_month, month
-ORDER BY first_shipping_month;
+    GROUP BY f.customer_key, s.shipping_month_name, s.shipping_month)
+SELECT
+c.month,
+COUNT(DISTINCT c.customer_key) AS total_customers
+FROM customer_cohort c
+JOIN gold.fact_sales s
+    ON c.customer_key = s.customer_key
+JOIN gold.dim_order_date o
+    ON s.order_date_key = o.order_date_key
+WHERE c.first_shipping_year = 2013
+GROUP BY c.month,c.first_shipping_month
+ORDER BY c.first_shipping_month
 /*
 month	    customers
 January	    465
