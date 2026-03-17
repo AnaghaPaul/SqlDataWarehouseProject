@@ -1,10 +1,9 @@
 -- ___________________________________________________________Cohort Analysis___________________________________________________________________________________
-/* A Cohort Analysis compares similar groups over time.*/
--- Type of cohort analysis - Returnship - Repeat Purchase Behaviour
+-- The cohort analysis  compares similar groups over time. 
 
--- Assigning each customers to cohorts according to the acquisition year
+-- Cohort Type 1 - Users are grouped based on the year they were acquired that is the year they placed their first order.
 
-
+-- Cohorts and the number of participants 
 WITH customer_cohort AS
 (
     SELECT
@@ -33,6 +32,7 @@ NULL		15
 2013		12510
 2014		506
 */
+-- The null values are the results of invalid order dates in the source data.
 
 -- Revenue acquired in each year per cohort
 
