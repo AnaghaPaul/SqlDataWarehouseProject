@@ -135,40 +135,52 @@ NULL	    NULL                   	NULL	                NULL	                NULL
 */
 --_____________________________________________________________________YEAR 2013 - comparing customers according to the month they arrived_________________________________
 WITH customer_cohort AS
-(SELECT
-        f.customer_key AS customer_key,
-        MIN(s.shipping_year) AS first_shipping_year,
-        MIN(s.shipping_month) AS first_shipping_month,
-        s.shipping_month_name AS month
-    FROM gold.fact_sales AS f
-    JOIN gold.dim_shipping_date AS s
-        ON f.shipping_date_key = s.shipping_date_key
-    GROUP BY f.customer_key, s.shipping_month_name, s.shipping_month)
+(
+    SELECT
+        f.customer_key,
+        MIN(o.order_year)  AS first_order_year,
+        MIN(o.order_month) AS first_order_month
+    FROM gold.fact_sales f
+    JOIN gold.dim_order_date o
+        ON f.order_date_key = o.order_date_key
+    GROUP BY f.customer_key
+),
+
+month_lookup AS
+(
+    SELECT DISTINCT
+        order_month,
+        order_month_name
+    FROM gold.dim_order_date
+)
+
 SELECT
-c.month,
-COUNT(DISTINCT c.customer_key) AS total_customers
+    m.order_month_name,
+    COUNT(DISTINCT c.customer_key) AS total_customers
 FROM customer_cohort c
-JOIN gold.fact_sales s
-    ON c.customer_key = s.customer_key
-JOIN gold.dim_order_date o
-    ON s.order_date_key = o.order_date_key
-WHERE c.first_shipping_year = 2013
-GROUP BY c.month,c.first_shipping_month
-ORDER BY c.first_shipping_month
+JOIN month_lookup m
+    ON c.first_order_month = m.order_month
+WHERE c.first_order_year = 2013
+GROUP BY
+    c.first_order_month,
+    m.order_month_name
+ORDER BY
+    c.first_order_month
+;
 /*
-month	    customers
-January	    465
-October	    1923
-November	2018
-December	2117
-February	1242
-March	    1596
-April	    1538
-May        	1621
-June	    1886
-July	    1756
-August	    1828
-September	1746
+order_month_name	total_customers
+January				636
+February			1039
+March				1131
+April				1055
+May					1107
+June				1132
+July				1027
+August				1050
+September			1005
+October				1106
+November			1106
+December			1127
 */
 
 WITH customer_cohort AS
