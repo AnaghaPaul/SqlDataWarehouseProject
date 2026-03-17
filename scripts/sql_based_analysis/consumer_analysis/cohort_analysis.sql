@@ -87,56 +87,6 @@ NULL			0			0			0			0			0
 2014			26049		0			0			0			0
 */
 
--- Revenue growth each year
-WITH customer_cohort AS
-(
-SELECT
-    s.customer_key,
-    MIN(o.order_year) AS cohort
-FROM gold.fact_sales s
-JOIN gold.dim_order_date o
-    ON s.order_date_key = o.order_date_key
-GROUP BY s.customer_key
-),
-
-cohort_revenue AS
-(
-SELECT
-    c.cohort,
-    SUM(CASE WHEN o.order_year = 2010 THEN s.sales_amount ELSE 0 END) AS revenue_2010,
-    SUM(CASE WHEN o.order_year = 2011 THEN s.sales_amount ELSE 0 END) AS revenue_2011,
-    SUM(CASE WHEN o.order_year = 2012 THEN s.sales_amount ELSE 0 END) AS revenue_2012,
-    SUM(CASE WHEN o.order_year = 2013 THEN s.sales_amount ELSE 0 END) AS revenue_2013,
-    SUM(CASE WHEN o.order_year = 2014 THEN s.sales_amount ELSE 0 END) AS revenue_2014
-
-FROM customer_cohort c
-JOIN gold.fact_sales s
-    ON c.customer_key = s.customer_key
-JOIN gold.dim_order_date o
-    ON s.order_date_key = o.order_date_key
-
-GROUP BY c.cohort
-)
-
-SELECT
-    cohort,
-	(revenue_2011 - revenue_2010) * 100.0 / NULLIF(revenue_2010,0) AS growth_2011,
-    (revenue_2012 - revenue_2011) * 100.0 / NULLIF(revenue_2011,0) AS growth_2012,
-    (revenue_2013 - revenue_2012) * 100.0 / NULLIF(revenue_2012,0) AS growth_2013,
-    (revenue_2014 - revenue_2013) * 100.0 / NULLIF(revenue_2013,0) AS growth_2014
-
-FROM cohort_revenue
-ORDER BY cohort;
-
-/*
-cohort    	growth_2011            	growth_2012            	growth_2013	            growth_2014
-NULL	    NULL                   	NULL	                NULL	                NULL
-2010	    -100.000000000000	    NULL	                NULL	                -100.000000000000
-2011	    NULL	                -99.138455945706	    6996.077434172750	    -100.000000000000
-2012	    NULL                	NULL                	5.447811175249	        -100.000000000000
-2013	    NULL                	NULL                	NULL                	-99.667319756601
-2014    	NULL	                NULL                	NULL                	NULL
-*/
 --_____________________________________________________________________YEAR 2013 - comparing customers according to the month they arrived_________________________________
 WITH customer_cohort AS
 (
@@ -254,4 +204,109 @@ cohort_month	M0			M1			M2			M3			M4			M5			M6			M7			M8			M9			M10			M11
 10				575330		1682		1440		1315		0			0			0			0			0			0			0			0
 11				745494		1587		1542		0			0			0			0			0			0			0			0			0
 12				736919		1048		0			0			0			0			0			0			0			0			0			0
+*/
+
+
+WITH customer_cohort AS
+(
+    SELECT
+        f.customer_key,
+        MIN(f.order_date_key) AS first_order_date_key
+    FROM gold.fact_sales f
+    GROUP BY f.customer_key
+),
+cohort_base AS
+(
+
+SELECT
+    d.order_year,
+    d.order_month,
+    d.order_month_name,
+    COUNT(DISTINCT c.customer_key) AS total_customers
+FROM customer_cohort c
+JOIN gold.dim_order_date d
+    ON c.first_order_date_key = d.order_date_key
+WHERE d.order_year = 2013
+GROUP BY
+    d.order_year,
+    d.order_month,
+    d.order_month_name
+)
+, cohort_with_date AS
+(
+    SELECT
+        c.customer_key,
+        d.order_year,
+        d.order_month,
+        d.order_month_name,
+        c.first_order_date_key
+    FROM customer_cohort c
+    JOIN gold.dim_order_date d
+        ON c.first_order_date_key = d.order_date_key
+)
+, cohort_activity AS
+(
+    SELECT
+        c.customer_key,
+        c.order_year,
+        c.order_month AS cohort_month,
+
+        d.order_year AS activity_year,
+        d.order_month AS activity_month,
+
+     
+        (d.order_year - c.order_year) * 12 +
+        (d.order_month - c.order_month) AS month_offset,
+
+        s.sales_amount
+    FROM cohort_with_date c
+    JOIN gold.fact_sales s
+        ON c.customer_key = s.customer_key
+    JOIN gold.dim_order_date d
+        ON s.order_date_key = d.order_date_key
+    WHERE c.order_year = 2013
+)
+   SELECT
+    a.cohort_month,
+    b.total_customers,
+
+    CAST((SUM(CASE WHEN month_offset = 0 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M0,
+    CAST((SUM(CASE WHEN month_offset = 1 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M1,
+    CAST((SUM(CASE WHEN month_offset = 2 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M2,
+    CAST((SUM(CASE WHEN month_offset = 3 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M3,
+    CAST((SUM(CASE WHEN month_offset = 4 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M4,
+    CAST((SUM(CASE WHEN month_offset = 5 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M5,
+    CAST((SUM(CASE WHEN month_offset = 6 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M6,
+    CAST((SUM(CASE WHEN month_offset = 7 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M7,
+    CAST((SUM(CASE WHEN month_offset = 8 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M8,
+    CAST((SUM(CASE WHEN month_offset = 9 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M9,
+    CAST((SUM(CASE WHEN month_offset = 10 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M10,
+    CAST((SUM(CASE WHEN month_offset = 11 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M11,
+    CAST((SUM(CASE WHEN month_offset = 12 THEN sales_amount ELSE 0 END) * 1.0 / b.total_customers) AS DECIMAL(10,2)) AS ARPU_M12
+
+FROM cohort_activity a
+JOIN cohort_base b
+    ON a.cohort_month = b.order_month
+    AND a.order_year = b.order_year
+
+GROUP BY
+    a.cohort_month,
+    b.total_customers
+
+ORDER BY a.cohort_month;
+
+/*
+cohort_month	total_customers		ARPU_M0		ARPU_M1		ARPU_M2		ARPU_M3		ARPU_M4		ARPU_M5		ARPU_M6		ARPU_M7		ARPU_M8		ARPU_M9		ARPU_M10	ARPU_M11	ARPU_M12
+1				324					976.04		3.02		3.24		19.11		11.09		10.86		5.48		19.68		2.42		6.33		19.82		3.44		2.83
+2				1087				277.81		3.92		3.48		8.10		7.32		3.89		4.60		3.31		4.02		3.84		3.76		2.98		0.00
+3				1164				291.68		2.07		2.35		5.74		12.59		7.58		1.77		2.11		2.15		1.83		1.70		0.00		0.00
+4				1088				370.90		1.44		2.44		10.34		1.75		4.11		1.69		1.23		1.69		1.57		0.00		0.00		0.00
+5				1141				418.50		2.00		7.59		11.98		9.72		1.12		1.60		1.40		1.90		0.00		0.00		0.00		0.00
+6				1154				468.40		0.87		3.60		5.56		24.35		6.02		1.36		0.95		0.00		0.00		0.00		0.00		0.00
+7				1052				334.39		1.10		1.61		1.52		3.75		20.57		1.45		0.00		0.00		0.00		0.00		0.00		0.00
+8				1063				365.04		0.96		3.67		1.45		13.24		1.40		0.00		0.00		0.00		0.00		0.00		0.00		0.00
+9				1029				391.18		1.52		1.48		1.66		1.33		0.00		0.00		0.00		0.00		0.00		0.00		0.00		0.00
+10				1133				507.79		1.48		1.27		1.16		0.00		0.00		0.00		0.00		0.00		0.00		0.00		0.00		0.00
+11				1133				657.98		1.40		1.36		0.00		0.00		0.00		0.00		0.00		0.00		0.00		0.00		0.00		0.00
+12				1142				645.29		0.92		0.00		0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00
 */
