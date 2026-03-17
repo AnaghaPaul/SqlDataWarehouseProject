@@ -257,6 +257,8 @@ Prevents:
 
 ## 🏗️ 3. Medallion Architecture (Bronze → Silver → Gold)
 
+[View SQL Scripts](./scripts/data_warehouse)
+
 The warehouse follows a structured layered architecture.
 
 ![Data Architecture](docs/data_warehouse_docs/data_architecture.png)
