@@ -43,7 +43,7 @@ Supports multi-country reporting.
 
 # 🗂️ Data Sources
 
-[View Datasets](./retail_and_order_management_datawarehouse/datasets)
+[View Datasets](./datasets)
 
 The data warehouse consolidates operational data from two enterprise systems: **CRM** and **ERP**.  
 Each system contributes distinct business capabilities that are integrated and conformed in the warehouse.
