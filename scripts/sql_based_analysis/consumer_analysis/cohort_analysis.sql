@@ -4,43 +4,34 @@
 
 -- Assigning each customers to cohorts according to the acquisition year
 
-SELECT
-MIN(o.order_year) AS cohort,
-s.customer_key AS customer_key
-FROM
-gold.fact_sales AS s
-JOIN
-gold.dim_order_date AS o
-ON s.order_date_key = o.order_date_key
-GROUP BY s.customer_key
-ORDER BY MIN(o.order_year);
 
--- Total customers in each cohort
 WITH customer_cohort AS
 (
-SELECT
-s.customer_key AS customer_key,
-MIN(o.order_year) AS cohort
-FROM
-gold.fact_sales AS s
-JOIN
-gold.dim_order_date AS o
-ON s.order_date_key = o.order_date_key
-GROUP BY s.customer_key
+    SELECT
+        customer_key,
+        MIN(order_date_key) AS first_order_date_key
+    FROM gold.fact_sales
+    GROUP BY customer_key
 )
-SELECT cohort, 
-COUNT(DISTINCT customer_key) AS total_customers
-FROM customer_cohort
-GROUP BY cohort
-ORDER BY cohort;
+
+SELECT
+    d.order_year AS cohort_year,
+    COUNT(*) AS total_customers
+FROM customer_cohort c
+JOIN gold.dim_order_date d
+    ON c.first_order_date_key = d.order_date_key
+GROUP BY
+    d.order_year
+ORDER BY
+    d.order_year;
 /*
-cohort	    total_customers
-NULL	    2
-2010	    14
-2011	    2216
-2012	    3225
-2013	    12521
-2014	    506
+cohort_year	total_customers
+NULL		15
+2010		14
+2011		2215
+2012		3224
+2013		12510
+2014		506
 */
 
 -- Revenue acquired in each year per cohort
