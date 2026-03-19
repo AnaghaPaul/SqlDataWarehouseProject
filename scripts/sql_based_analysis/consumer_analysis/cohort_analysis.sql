@@ -1,9 +1,13 @@
 -- ___________________________________________________________Cohort Analysis___________________________________________________________________________________
 -- The cohort analysis  compares similar groups over time. 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Cohort Granularity Level - Yearly
+-- Cohorts are created according to year of acquisition or the year the customer first purchased.
+-- >>> Benefits
+-- Allows for high level trend anlaysis
+-- Avoid noise
 
--- Cohort Type 1 - Users are grouped based on the year they were acquired that is the year they placed their first order.
-
--- Cohorts and the number of participants 
+-- Cohort Summary : Cohorts and the number of participants 
 WITH customer_cohort AS
 (
     SELECT
