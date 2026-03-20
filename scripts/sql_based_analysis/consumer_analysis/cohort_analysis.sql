@@ -73,36 +73,44 @@ NULL	            15
 
 -- Use Case:
 -- Evaluate long-term value and retention quality.
-
 WITH customer_cohort AS
 (
     SELECT
-        customer_key,
-        MIN(order_date_key) AS first_order_date_key
-    FROM gold.fact_sales
-    GROUP BY customer_key
-), cohort_with_year AS
+        f.customer_key,
+        MIN(d.order_date) AS first_order_date
+    FROM gold.fact_sales f
+    JOIN gold.dim_order_date d
+        ON f.order_date_key = d.order_date_key
+    GROUP BY f.customer_key
+),
+cohort_with_fiscal AS
 (
     SELECT
         c.customer_key,
-        d.order_fiscal_year AS cohort_fiscal_year -- Fiscal year
+        c.first_order_date,
+        d.order_fiscal_year AS cohort_fiscal_year
     FROM customer_cohort c
     JOIN gold.dim_order_date d
-        ON c.first_order_date_key = d.order_date_key
-), cohort_activity AS
+        ON c.first_order_date = d.order_date
+),
+cohort_activity AS
 (
     SELECT
         c.customer_key,
         c.cohort_fiscal_year,
-        d.order_fiscal_year,
-        (d.order_fiscal_year - c.cohort_fiscal_year) AS year_offset,
-        s.sales_amount
-    FROM cohort_with_year c
+        c.first_order_date,
+        d.order_date AS activity_date,
+        s.sales_amount,
+
+        FLOOR(DATEDIFF(DAY, c.first_order_date, d.order_date) / 365.0) AS year_offset
+
+    FROM cohort_with_fiscal c
     JOIN gold.fact_sales s
         ON c.customer_key = s.customer_key
     JOIN gold.dim_order_date d
         ON s.order_date_key = d.order_date_key
-)SELECT
+)
+SELECT
     cohort_fiscal_year,
 
     SUM(CASE WHEN year_offset = 0 THEN sales_amount ELSE 0 END) AS Y0,
@@ -115,15 +123,14 @@ FROM cohort_activity
 WHERE cohort_fiscal_year IS NOT NULL
 GROUP BY cohort_fiscal_year
 ORDER BY cohort_fiscal_year;
-    
+   
 /*
-cohort_fiscal_year	    Y0	        Y1	        Y2	        Y3	    Y4
-2011	                7049833    	72811	    4281626    	0	    0
-2012	                5861792	    6149063    	0	        0	    0
-2013	                5876309	    19396	    0	        0	    0
-2014	                26049	    0	        0	        0	    0
+cohort_fiscal_year	Y0	        Y1	        Y2	        Y3	    Y4
+2011	            7053411	    2537374    	1817078	    0	    0
+2012	            8449243	    3566232	    0	        0	    0
+2013	            5901871	    0	        0	        0	    0
+2014	            26049	    0	        0	        0	    0
 */
-
 --_____________________________________________________________________YEAR 2013 - comparing customers according to the month they arrived_________________________________
 -- =========================================================
 -- STEP 4: MONTHLY COHORT ANALYSIS (YEAR = 2013)
