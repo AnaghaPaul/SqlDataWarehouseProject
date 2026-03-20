@@ -470,3 +470,82 @@ Oct-2013  	    1012	            1.00	0.02	0.02	0.02	0.00	0.00	0.00	0.00	0.00	0.0
 Nov-2013  	    1063	            1.00	0.02	0.02	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00
 Dec-2013  	    1285	            1.00	0.02	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00	0.00
 */
+WITH customer_cohort AS
+(
+    SELECT
+        f.customer_key,
+        MIN(d.order_date) AS first_order_date
+    FROM gold.fact_sales f
+    JOIN gold.dim_order_date d
+        ON f.order_date_key = d.order_date_key
+    GROUP BY f.customer_key
+),
+customer_activity AS
+(
+    SELECT DISTINCT
+        c.customer_key,
+        c.first_order_date,
+        d.order_date AS activity_date,
+
+        FLOOR(DATEDIFF(DAY, c.first_order_date, d.order_date) / 365.0) AS year_offset
+
+    FROM customer_cohort c
+    JOIN gold.fact_sales s
+        ON c.customer_key = s.customer_key
+    JOIN gold.dim_order_date d
+        ON s.order_date_key = d.order_date_key
+),
+pivot_activity AS
+(
+    SELECT
+        customer_key,
+        MIN(first_order_date) AS first_order_date,
+
+        MAX(CASE WHEN year_offset = 0 THEN 1 ELSE 0 END) AS Y0,
+        MAX(CASE WHEN year_offset = 1 THEN 1 ELSE 0 END) AS Y1,
+        MAX(CASE WHEN year_offset = 2 THEN 1 ELSE 0 END) AS Y2,
+        MAX(CASE WHEN year_offset = 3 THEN 1 ELSE 0 END) AS Y3,
+        MAX(CASE WHEN year_offset = 4 THEN 1 ELSE 0 END) AS Y4
+
+    FROM customer_activity
+    GROUP BY customer_key
+),
+cohort_size AS
+(
+    SELECT
+        YEAR(first_order_date) AS cohort_year,
+        COUNT(*) AS total_customers
+    FROM pivot_activity
+    GROUP BY YEAR(first_order_date)
+)
+SELECT
+    YEAR(p.first_order_date) AS cohort_year,
+    c.total_customers,
+
+    1.0 AS R0,
+
+    CAST(SUM(CASE WHEN Y1 = 1 THEN 1 ELSE 0 END) * 1.0 / c.total_customers AS DECIMAL(5,2)) AS R1,
+
+    CAST(SUM(CASE WHEN Y1 = 1 AND Y2 = 1 THEN 1 ELSE 0 END) * 1.0 / c.total_customers AS DECIMAL(5,2)) AS R2,
+
+    CAST(SUM(CASE WHEN Y1 = 1 AND Y2 = 1 AND Y3 = 1 THEN 1 ELSE 0 END) * 1.0 / c.total_customers AS DECIMAL(5,2)) AS R3,
+
+    CAST(SUM(CASE WHEN Y1 = 1 AND Y2 = 1 AND Y3 = 1 AND Y4 = 1 THEN 1 ELSE 0 END) * 1.0 / c.total_customers AS DECIMAL(5,2)) AS R4
+
+FROM pivot_activity p
+JOIN cohort_size c
+    ON YEAR(p.first_order_date) = c.cohort_year
+
+GROUP BY
+    YEAR(p.first_order_date),
+    c.total_customers
+
+ORDER BY cohort_year;
+/*
+cohort_year	total_customers	        R0        	R1	    R2	    R3    	R4
+2010	    14	                    1.0	        0.00	0.00	0.00	0.00
+2011	    2216	                1.0	        0.52	0.08	0.00	0.00
+2012	    3225	                1.0	        0.52	0.00	0.00	0.00
+2013	    12521	                1.0	        0.00	0.00	0.00	0.00
+2014	    506	                    1.0	        0.00	0.00	0.00	0.00
+*/
