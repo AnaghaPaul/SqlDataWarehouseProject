@@ -318,7 +318,8 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 
 -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			DECLARE @start_date DATETIME = '12/29/2010' --Starting value of Date Range
-			DECLARE @end_date DATETIME = '01/01/2100' --End Value of Date Range
+			DECLARE @end_date DATETIME = '12/31/2100' --End Value of Date Range
+			SET DATEFIRST 7 --corrected
 -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			PRINT '>> The dwh_dim_date will be populated from ' + CAST(@start_date AS NVARCHAR(30))  + ' to ' + CAST(@end_date AS NVARCHAR(30)) + '.';
 
@@ -628,7 +629,7 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			SET @fiscal_quarter = 1
 			SET @fiscal_week_of_year = 1
 			
-			IF (EXISTS (SELECT * FROM @leap_table WHERE @fiscal_year = @leap_year))
+			IF (EXISTS (SELECT 1 FROM @leap_table WHERE leap_year = @fiscal_year))-- corrected
 			    BEGIN
 			        SET @leap_week = 1
 			    END
@@ -641,7 +642,7 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			
 			/* Loop on days in interval*/
 			
-			WHILE (DATEPART(yy,@fiscal_current_date) <= @last_year)
+			WHILE (@fiscal_year <= @last_year)
 			BEGIN
 			    
 			/*SET fiscal Month*/
@@ -707,6 +708,8 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			    SET @fiscal_current_date = DATEADD(dd, 1, @fiscal_current_date)
 			    SET @fiscal_day_of_year = @fiscal_day_of_year + 1
 			    SET @fiscal_week_of_year = ((@fiscal_day_of_year-1) / 7) + 1
+				IF @fiscal_current_date > @end_date
+				BREAK-- corrected
 			
 			
 			    IF (@fiscal_week_of_year > (52+@leap_week))
@@ -715,7 +718,7 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			        SET @fiscal_day_of_year = 1
 			        SET @fiscal_week_of_year = 1
 			        SET @fiscal_year = @fiscal_year + 1
-			        IF (EXISTS (SELECT * FROM @leap_table WHERE @fiscal_year = leap_year))
+			        IF (EXISTS (SELECT 1 FROM @leap_table WHERE leap_year = @fiscal_year))-- corrected
 			        BEGIN
 			            SET @leap_week = 1
 			        END
@@ -864,5 +867,3 @@ CREATE OR ALTER PROCEDURE silver.load_silver AS --stored procedure
 			 PRINT '==============================================='
 		END CATCH			
 	END
-
-	
