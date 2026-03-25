@@ -8,23 +8,120 @@
 
 -- Cohort Type:
 -- Acquisition Cohort (based on first purchase)
+WITH first_purchase_info AS
+(
+SELECT customer_key,
+MIN(order_date_key) AS first_purchase_date_key
+FROM 
+gold.fact_sales 
+GROUP BY
+customer_key
+),
+customer_cohort
+AS
+(
+SELECT
+f.customer_key,
+o.order_fiscal_year AS cohort_year,
+o.order_fiscal_month AS cohort_month,
+o.order_fiscal_quarter AS cohort_quarter,
+o.order_fiscal_mmyyyy AS cohort_mmyyyy,
+o.order_fiscal_month_year AS cohort_month_year
+FROM
+first_purchase_info AS f
+JOIN
+gold.dim_order_date AS o
+ON
+f.first_purchase_date_key = o.order_date_key
+WHERE f.first_purchase_date_key != -1
+),
+purchase_info AS(
+SELECT 
+c.customer_key,
+c.cohort_year,
+c.cohort_month,
+c.cohort_quarter,
+c.cohort_mmyyyy,
+c.cohort_month_year,
+s.order_number ,
+s.order_date_key AS order_date_key,
+o.order_date AS order_date,
+o.order_fiscal_year AS order_year,
+o.order_fiscal_month AS order_month,
+o.order_fiscal_quarter AS order_quarter,
+(o.order_fiscal_year - c.cohort_year) * 12 + (o.order_fiscal_month - c.cohort_month) AS month_offset,
+s.sales_amount
+FROM 
+customer_cohort AS c
+JOIN
+gold.fact_sales s
+ON c.customer_key=s.customer_key
+JOIN
+gold.dim_order_date AS o
+ON s.order_date_key = o.order_date_key)
+SELECT
+	cohort_year,
+	cohort_month,
+	cohort_mmyyyy,
+    cohort_month_year,  -- display label
+	SUM(CASE WHEN month_offset = 0 THEN sales_amount ELSE 0 END) AS M0,
+    SUM(CASE WHEN month_offset = 1 THEN sales_amount ELSE 0 END) AS M1,
+    SUM(CASE WHEN month_offset = 2 THEN sales_amount ELSE 0 END) AS M2,
+    SUM(CASE WHEN month_offset = 3 THEN sales_amount ELSE 0 END) AS M3,
+    SUM(CASE WHEN month_offset = 4 THEN sales_amount ELSE 0 END) AS M4,
+    SUM(CASE WHEN month_offset = 5 THEN sales_amount ELSE 0 END) AS M5,
+    SUM(CASE WHEN month_offset = 6 THEN sales_amount ELSE 0 END) AS M6,
+    SUM(CASE WHEN month_offset = 7 THEN sales_amount ELSE 0 END) AS M7,
+    SUM(CASE WHEN month_offset = 8 THEN sales_amount ELSE 0 END) AS M8,
+    SUM(CASE WHEN month_offset = 9 THEN sales_amount ELSE 0 END) AS M9,
+    SUM(CASE WHEN month_offset = 10 THEN sales_amount ELSE 0 END) AS M10,
+    SUM(CASE WHEN month_offset = 11 THEN sales_amount ELSE 0 END) AS M11
+	FROM purchase_info
+	GROUP BY cohort_year,cohort_month,cohort_mmyyyy, cohort_month_year
+	ORDER BY cohort_year,cohort_month;
 
--- Granularity:
--- 1. Yearly (macro trend analysis)
--- 2. Monthly (detailed behavioral analysis)
 
--- Key Objective:
--- Track how customer value evolves over time after acquisition.
+/*
+cohort_year	cohort_month	cohort_mmyyyy	cohort_month_year	M0				M1				M2				M3				M4				M5				M6				M7				M8					M9				M10				M11
+2011		1				012011			Jan-2011		  	426260			0				0				0				0				0				0				0				0					0				0				0
+2011		2				022011			Feb-2011  			448926 			0				0				0				0				0				0				0				0					0				0				0
+2011		3				032011			Mar-2011  			542465			0				0				0				0				0				0				0				0					0				0				0
+2011		4				042011			Apr-2011  			481444			0				0				0				0				0				0				0				0					0				0				0
+2011		5				052011			May-2011  			516506			0				0				0				0				0				0				0				0					0				0				0
+2011		6				062011			Jun-2011  			800335			0				0				0				0				0				0				0				0					0				0				0
+2011		7				072011			Jul-2011  			552865			0				0				0				0				0				0				0				0					0				0				0
+2011		8				082011			Aug-2011  			534427			0				0				0				0				0				0				0				0					0				0				0
+2011		9				092011			Sep-2011  			737016			0				0				0				0				0				0				0				0					0				0				0
+2011		10				102011			Oct-2011  			582025			0				0				0				0				0				0				0				0					0				0				0
+2011		11				112011			Nov-2011  			687675			0				0				0				0				0				0				0				0					0				0				0
+2011		12				122011			Dec-2011  			739889			0				0				0				0				0				0				0				0					0				0				0
+2012		1				012012			Jan-2012  			459259			0				0				0				0				0				0				0				0					0				0				646
+2012		2				022012			Feb-2012  			477369			0				0				0				0				0				0				0				0					0				0				5747
+2012		3				032012			Mar-2012  			451883			0				0				0				0				0				0				0				0					2507			9936			7917
+2012		4				042012			Apr-2012 		 	383713		-	0				0				0				0				0				0				0				1269				3996			6500			21056
+2012		5				052012			May-2012  			297896			0				0				0				0				0				0				3725			5721				1186			16822			21409
+2012		6				062012			Jun-2012  			622552			0				0				0				0				0				6133			17479			12342				39390			23261			43717
+2012		7				072012			Jul-2012  			411779			0				0				0				0				0				22859			7970			14684				5545			36772			62982
+2012		8				082012			Aug-2012  			485461			0				0				0				3149			27177			17363			27917			27139				19906			67477			48495
+2012		9				092012			Sep-2012  			524614			0				0				4686			16346			20955			32040			29050			18381				76935			30792			99607
+2012		10				102012			Oct-2012  			483866			0			 	2355			22622			16304			17573			7389			5968			81372				26390			21457			109964
+2012		11				112012			Nov-2012  			624794			2939			14982			26977			17847			12054			43232			56063			68239				22158			89577			158189
+2012		12				122012			Dec-2012  			611197			14114			17704			28378			13171			31601			38664			57383			37298				66398			61547			137808
+2013		1				012013			Jan-2013  			295407			810				498				5489			3123			801				1056			5488			394					1547			4506			2216
+2013		2				022013			Feb-2013  			295175			4679			4169			8522			11173			4480			2854			4475			3941				4050			4905			3413
+2013		3				032013			Mar-2013  			388986			2185			2769			9847			12035			11357			3059			2413			2660				2681			2221			0
+2013		4				042013			Apr-2013  			375364			1508			5245			8581			1477			4843			1530			1151			2061				1659			0				0
+2013		5				052013			May-2013  			416393			2267			8473			13204			10999			1189			1490			1740			1885				0				0				0
+2013		6				062013			Jun-2013  			617001			1281			4604			7047			27967			7105			2225			1433			0					0				0				0
+2013		7				072013			Jul-2013  			325126			724				1676			1488			3669			21337			1462			0				0					0				0				0
+2013		8				082013			Aug-2013  			341536			1307			2303			1663			14096			1338			0				0				0					0				0				0
+2013		9				092013			Sep-2013  			479696			2479			1591			2095			1713			0				0				0				0					0				0				0
+2013		10				102013			Oct-2013  			516918			1416			1419			985				0				0				0				0				0					0				0				0
+2013		11				112013			Nov-2013  			692415			1437			1220			0				0				0				0				0				0					0				0				0
+2013		12				122013			Dec-2013  			829423			1523			0				0				0				0				0				0				0					0				0				0
+2014		1				012014			Jan-2014  			26049			0				0				0				0				0				0				0				0					0				0				0
 
--- =========================================================
--- WHY COHORT ANALYSIS?
--- =========================================================
-
--- 1. Identifies retention patterns over time
--- 2. Separates growth from customer acquisition vs engagement
--- 3. Removes noise from aggregate metrics
--- 4. Enables lifecycle-based decision making
--- 5. Helps evaluate marketing effectiveness by cohort
+*/
 
 
 WITH customer_cohort AS
