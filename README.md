@@ -330,6 +330,91 @@ Focus areas:
 - Revenue and growth trends  
 - Time-series and seasonal analysis  
 
+
+The analytical layer builds on the already structured warehouse, with SQL used not just for querying but for data validation, exploratory understanding, and advanced business analysis.
+
+1. Data Exploration & Validation
+
+Although transformation was completed during the Medallion pipeline, an additional SQL-based validation layer was applied to ensure analytical reliability.
+
+Exploration Focus:
+
+Understanding schema design and relationships across fact_sales and dimensions
+Reviewing:
+Tables, views, and schemas
+Column structures and data types
+Record distributions and grain consistency
+
+Key Validation Techniques:
+
+Referential integrity checks between fact and dimension tables
+Validation of surrogate key mappings
+
+Special Handling:
+
+Unknown or missing foreign keys (e.g., order_date_key) were standardized to -1, linking to an “Unknown” member in date dimensions
+
+Outcome:
+
+No broken joins
+Consistent aggregation behavior in BI tools
+
+
+2. Data Profiling
+
+SQL profiling queries were used to verify data quality at the analytical layer.
+
+Checks Performed:
+
+Area	Validation
+Duplicates	Verified uniqueness at fact table grain (order line level)
+Null Handling	Identified and resolved nulls in key analytical fields
+Data Consistency	Cross-validated CRM vs ERP integrated attributes
+Distribution Analysis	Reviewed value spread for measures like revenue and quantity
+
+Outcome:
+
+Confirmed clean, analysis-ready dataset
+Eliminated risks of double counting or skewed aggregations
+
+3.Cohort Analysis (Customer Lifecycle)
+
+A cohort-based approach was implemented to analyze how customer value evolves over time.
+
+Methodology:
+
+Customers grouped into cohorts based on first purchase date
+Lifecycle tracked using the shared dim_date
+
+Metrics Analyzed:
+
+Total revenue per cohort
+Average revenue per customer (ARPU)
+Cumulative revenue trends over time
+
+Insights Enabled:
+
+Comparison of customer quality across acquisition periods
+Identification of:
+Strong vs weak acquisition cohorts
+Retention and revenue decay patterns
+Long-term customer value trends
+📈 5. Revenue-Based Cohort Trends
+
+Advanced SQL window functions were used to compute lifecycle metrics:
+
+Running cumulative revenue per cohort
+Rolling average revenue trends
+Period-over-period cohort comparisons
+
+Business Value:
+
+Helps evaluate:
+Marketing effectiveness
+Customer retention strategies
+Revenue sustainability
+
+
 ---
 
 # 📊 Power BI Integration
