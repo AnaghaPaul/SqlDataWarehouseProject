@@ -143,7 +143,37 @@ cohort_year	cohort_month	cohort_mmyyyy	cohort_month_year	M0				M1				M2				M3			
 2014		1				012014			Jan-2014  			26049			0				0				0				0				0				0				0				0					0				0				0
 
 */
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------------------------------------
+-- ARPC (Average Revenue Per Customer) Definitions:
+-- -----------------------------------------------------------------------------------------------------------
+-- ARPC_M0 : Average revenue per customer in the acquisition month (M0)
+--            Formula: ARPC_M0 = M0 / num_customers
+--            Interpretation: Represents the average revenue generated per cohort customer in their acquisition month.
+--            Includes first purchase and any additional purchases in that same month. Each customer’s contribution
+--            is measured relative to the cohort, like a student’s grade relative to the class average.
 
+-- ARPC_M1 : Average revenue per cohort customer in month 1 (one month after acquisition)
+--            Formula: ARPC_M1 = M1 / num_customers
+--            Interpretation: Measures early repeat purchase behavior. Excludes M0 revenue. 
+--            Reflects relative contribution of each cohort customer in month 1.
+
+-- ARPC_M2 … ARPC_M11 : Average revenue per cohort customer in months 2–11 after acquisition
+--            Formula: ARPC_Mn = Mn / num_customers
+--            Interpretation: Tracks cohort customers’ revenue in each specific month.
+--            Each month is an independent period, not cumulative. Shows relative per-customer contribution over time.
+
+-- ARPC_other : Average revenue per cohort customer beyond 11 months
+--            Formula: ARPC_other = other / num_customers
+--            Interpretation: Captures long-term revenue contribution of the cohort beyond the 12-month window.
+
+-- num_customers : Cohort size (total customers acquired in the cohort month)
+--            Important:
+--              - These are cohort customers, not necessarily active each month.
+--              - Used as denominator for ARPC to normalize per-customer revenue, regardless of activity in later months.
+--              - Fixing the cohort size allows consistent comparison of per-customer value over time, like comparing
+--                class averages across multiple months or classes.
+-- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 WITH order_level_sales AS (
     SELECT 
         order_number,
