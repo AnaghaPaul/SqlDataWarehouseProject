@@ -369,28 +369,39 @@ Checks Performed:
 
 Area	Validation
 Duplicates	Verified uniqueness at fact table grain (order line level)
+
 Null Handling	Identified and resolved nulls in key analytical fields
+
 Data Consistency	Cross-validated CRM vs ERP integrated attributes
+
 Distribution Analysis	Reviewed value spread for measures like revenue and quantity
 
 Outcome:
 
 Confirmed clean, analysis-ready dataset
+
 Eliminated risks of double counting or skewed aggregations
 
 ### 3.Cohort Analysis (Customer Lifecycle)
 
-A cohort-based approach was implemented to analyze how customer value evolves over time.
+A cohort-based approach was implemented to analyze how customer value evolves over time. Many important
+behaviors take weeks, months, or years to occur or evolve, and cohort analysis is
+a way to understand these changes.
 
 Methodology:
 
-Customers grouped into cohorts based on first purchase date
+Cohort grouping - Customers grouped into cohorts based on first purchase date
+
 Lifecycle tracked using the shared dim_date
 
-Metrics Analyzed:
+Aggregate Metrics Analyzed:
+
+1) Revenue
 
 Total revenue per cohort
+
 Average revenue per customer (ARPU)
+
 Cumulative revenue trends over time
 
 Insights Enabled:
@@ -407,20 +418,50 @@ Long-term customer value trends
 
 📈 5. Revenue-Based Cohort Trends
 
-Advanced SQL window functions were used to compute lifecycle metrics:
-
-Running cumulative revenue per cohort
-Rolling average revenue trends
-Period-over-period cohort comparisons
-
-Business Value:
-
-Helps evaluate:
-Marketing effectiveness
-Customer retention strategies
-Revenue sustainability
-
 ![Total_Revenue_per_Cohort](docs/cohort_analysis/total_revenue_per_cohort.png)
+
+Cohort analysis shows that the business is heavily front-loaded, with the majority of revenue generated during the first purchase (m0).
+
+Post-acquisition revenue contributes significantly less
+
+Repeat purchasing behavior is limited and inconsistent
+
+Revenue expansion varies across cohorts without a stable retention pattern
+
+This aligns with the business model:
+
+Retail products such as bicycles and sports equipment are:
+
+High-consideration purchases
+
+Infrequent by nature
+
+
+🚀 Strategic Recommendations
+
+1. Maximize First-Purchase Value
+2.Increase Average Order Value (AOV) through:
+Product bundling (e.g., bikes + accessories)
+Cross-selling complementary items
+Optimize onboarding and checkout experience
+3. Focus on Acquisition & Virality
+Invest in referral programs to:
+Reduce customer acquisition cost (CAC)
+Drive organic growth
+Encourage sharing via:
+Incentives (discounts, credits)
+Social engagement loops
+4. Targeted Retention (Secondary Lever)
+
+Retention is not the primary growth driver but can extend value when applied selectively:
+
+Focus on:
+
+Accessories and repeat-use products
+
+Seasonal campaigns
+
+Use retention to supplement, not drive, revenue growth
 
 ---
 
