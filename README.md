@@ -420,6 +420,7 @@ Marketing effectiveness
 Customer retention strategies
 Revenue sustainability
 
+![Data Architecture](docs/cohort_analysis/.png)
 
 ---
 
