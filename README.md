@@ -381,8 +381,10 @@ Outcome:
 Confirmed clean, analysis-ready dataset
 
 Eliminated risks of double counting or skewed aggregations
+### 4.Trend Analysis
+![Sales Trend Analysis](docs/trend_analysis/sales_trend_analysis.png)
 
-### 3.Cohort Analysis (Customer Lifecycle)
+### 4.Cohort Analysis (Customer Lifecycle)
 
 A cohort-based approach was implemented to analyze how customer value evolves over time. Many important
 behaviors take weeks, months, or years to occur or evolve, and cohort analysis is
