@@ -23,6 +23,17 @@ sales_year	total_sales
 2013		16279963
 2014		297075
 */	
+
+SELECT
+o.order_fiscal_month_year AS fiscal_month_year,
+SUM(f.sales_amount) As total_sales
+FROM
+gold.fact_sales AS f
+JOIN
+gold.dim_order_date AS o
+ON f.order_date_key = o.order_date_key
+WHERE f.order_date_key != -1
+GROUP BY o.order_fiscal_month_year;
 -- ----------------------------------------------------------------------------------------------------------------------------------------
 -- Sales Trend
 -- MoM
