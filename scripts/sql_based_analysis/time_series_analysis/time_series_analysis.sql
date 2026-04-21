@@ -112,4 +112,17 @@ ORDER BY order_fiscal_year;
 -- gross profit = Revenue - cost of goods
 -- cost of goods = quantity * cost
 
+SELECT 
+s.order_number,
+s.product_key,
+s.sales_amount,
+s.quantity,
+p.cost,
+s.sales_amount - (p.cost * s.quantity) AS gross_profit 
+FROM 
+gold.fact_sales s
+JOIN
+gold.dim_products p
+ON p.product_key=s.product_key
+
 
