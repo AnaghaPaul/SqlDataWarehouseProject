@@ -220,3 +220,165 @@ df_3 = pd.read_sql(sql_query_3,conn)
 df_4 = pd.read_sql(sql_query_4,conn)
 
 
+# Time series - Gross Profit Trend
+sql_query_1="""WITH gross_profit_info AS (
+SELECT 
+s.order_number,
+s.product_key,
+s.sales_amount,
+s.quantity,
+p.cost,
+o.order_fiscal_year,
+o.order_fiscal_month,
+o.order_fiscal_mmyyyy,
+s.sales_amount - (COALESCE(p.cost, 0) * COALESCE(s.quantity, 0)) AS gross_profit
+FROM 
+gold.dim_products p
+JOIN
+gold.fact_sales s
+ON p.product_key = s.product_key
+JOIN
+gold.dim_order_date o
+ON s.order_date_key = o.order_date_key
+WHERE s.order_date_key != -1)
+SELECT
+order_fiscal_year,
+SUM(gross_profit) AS total_gross_profit
+FROM
+gross_profit_info
+GROUP BY order_fiscal_year
+ORDER BY order_fiscal_year"""
+
+sql_query_2 ='''WITH yearly_gross_profit AS
+(
+SELECT 
+o.order_fiscal_year,
+SUM(s.sales_amount - (COALESCE(p.cost, 0) * COALESCE(s.quantity, 0))) AS gross_profit
+FROM
+gold.dim_products p
+JOIN
+gold.fact_sales s
+ON p.product_key = s.product_key
+JOIN
+gold.dim_order_date o
+ON s.order_date_key = o.order_date_key
+WHERE o.order_date_key != -1
+GROUP BY o.order_fiscal_year),
+previous_profit_info AS 
+(
+SELECT
+order_fiscal_year,
+gross_profit AS current_year_gross_profit,
+LAG(gross_profit) OVER (ORDER BY order_fiscal_year) AS previous_year_gross_profit
+FROM
+yearly_gross_profit)
+SELECT
+order_fiscal_year,
+CASE 
+WHEN previous_year_gross_profit IS NULL or previous_year_gross_profit = 0 THEN NULL
+ELSE CAST(((current_year_gross_profit-previous_year_gross_profit)*100.00/previous_year_gross_profit)AS DECIMAL(7,2)) END AS profit_growth_rate
+FROM
+previous_profit_info'''
+
+sql_query_3 = """WITH gross_profit_info AS (
+SELECT 
+s.order_number,
+s.product_key,
+s.sales_amount,
+s.quantity,
+p.cost,
+o.order_fiscal_year,
+o.order_fiscal_month,
+o.order_fiscal_mmyyyy,
+s.sales_amount - (COALESCE(p.cost, 0) * COALESCE(s.quantity, 0)) AS gross_profit
+FROM 
+gold.dim_products p
+JOIN
+gold.fact_sales s
+ON p.product_key = s.product_key
+JOIN
+gold.dim_order_date o
+ON s.order_date_key = o.order_date_key
+WHERE s.order_date_key != -1)
+SELECT
+order_fiscal_mmyyyy,
+SUM(gross_profit) AS total_gross_profit
+FROM
+gross_profit_info
+GROUP BY  order_fiscal_year, order_fiscal_month,order_fiscal_mmyyyy
+ORDER BY order_fiscal_year, order_fiscal_month"""
+
+sql_query_4 = '''WITH monthly_gross_profit AS
+(
+SELECT
+order_fiscal_year,
+order_fiscal_month,
+order_fiscal_mmyyyy,
+SUM(s.sales_amount - (COALESCE(p.cost, 0) * COALESCE(s.quantity, 0))) AS gross_profit
+FROM
+gold.dim_products AS p
+JOIN
+gold.fact_sales AS s
+ON p.product_key = s.product_key
+JOIN
+gold.dim_order_date AS o
+ON s.order_date_key = o.order_date_key
+WHERE o.order_date_key != -1
+GROUP BY order_fiscal_year,order_fiscal_month,order_fiscal_mmyyyy
+
+), 
+previous_month_profit_info AS (
+SELECT 
+order_fiscal_mmyyyy,
+gross_profit AS current_month_profit,
+LAG(gross_profit) OVER (ORDER BY order_fiscal_year,order_fiscal_month) AS previous_month_profit
+FROM monthly_gross_profit)
+SELECT 
+order_fiscal_mmyyyy,
+CASE 
+WHEN previous_month_profit IS NULL or previous_month_profit = 0 THEN NULL
+ELSE CAST(((current_month_profit-previous_month_profit)*100.00/previous_month_profit)AS DECIMAL(7,2)) END AS profit_growth_rate
+FROM
+previous_month_profit_info'''
+
+df_1=pd.read_sql(sql_query_1,conn)
+df_2 = pd.read_sql(sql_query_2,conn)
+df_3=pd.read_sql(sql_query_3,conn)
+df_4 = pd.read_sql(sql_query_4,conn)
+# Profit Growth Visualization
+fig=plt.figure(figsize=(15,11))
+fig.subplots_adjust(hspace=0.4,wspace=0.4)
+fig.text(0.5, 0.01, "The 2014 data represents only a single month of observations.\n As a result, both YoY and MoM metrics for 2014 are not fully comparable to prior years and should be interpreted with caution due to the incomplete time coverage.", ha="center", fontsize=10)
+for i in range(1,5):
+    ax=fig.add_subplot(2,2,i)
+    
+    if i == 1:
+        ax.plot(df_1['order_fiscal_year'],df_1['total_gross_profit'])
+        ax.set_xticks(df_1['order_fiscal_year'])
+        ax.ticklabel_format(style='plain', axis='y')
+        ax.set_xlabel('year')
+        ax.set_ylabel('gross profit')
+        ax.set_title('YoY Gross Profit Trend')
+    elif i == 2:
+        ax.plot(df_2['order_fiscal_year'],df_2['profit_growth_rate'])
+        ax.set_xticks(df_2['order_fiscal_year'])
+        ax.set_xlabel('year')
+        ax.set_ylabel('gross profit growth rate (%)')
+        ax.set_title('YoY Gross Profit Growth Trend')
+    elif i ==3:
+        ax.plot(df_3['order_fiscal_mmyyyy'],df_3['total_gross_profit'])
+        ax.tick_params(axis ='x', labelrotation =90)
+        ax.set_xlabel('month year')
+        ax.set_ylabel('gross profit')
+        ax.set_title('MoM Gross Profit Trend')
+    elif i==4:
+        ax.plot(df_4['order_fiscal_mmyyyy'],df_4['profit_growth_rate'])
+        ax.set_xticks(df_4['order_fiscal_mmyyyy'])
+        ax.tick_params(axis ='x', labelrotation =90)
+        ax.ticklabel_format(style='plain', axis='y')
+        ax.set_xlabel('month year')
+        ax.set_ylabel('gross profit growth rate (%)')
+        ax.set_title('MoM Gross Profit Growth Trend')
+
+
+
