@@ -385,6 +385,8 @@ Eliminated risks of double counting or skewed aggregations
 ![Sales Trend Analysis](docs/trend_analysis/sales_trend_analysis.png)
 ![Profit Trend Analysis](docs/trend_analysis/profit_trend.png)
 
+Both gross profit and revenue exhibit a clear seasonal pattern, with performance strengthening toward the end of the year and peaking in December, indicating a strong year-end demand cycle—likely driven by holidays, promotional intensity, or budget utilization effects. A secondary, less consistent uplift is visible around June, suggesting a possible mid-year demand bump, though this is not uniformly observed across all years. The alignment between revenue and profit trends indicates that profit growth is largely volume-driven rather than margin expansion, meaning increases in profit are primarily a result of higher sales rather than improved cost efficiency. Notably, the sharp decline observed in early 2014 is due to incomplete data and should not be interpreted as a true performance drop. Overall, the business demonstrates predictable seasonality with heavy reliance on Q4 performance, highlighting an opportunity to stabilize revenue and profit generation during lower-performing months.
+
 ### 4.Cohort Analysis (Customer Lifecycle)
 
 A cohort-based approach was implemented to analyze how customer value evolves over time. Many important
